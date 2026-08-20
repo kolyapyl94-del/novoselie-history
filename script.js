@@ -1,7 +1,7 @@
 // Articles data - здесь вы можете редактировать тексты
 const articles = {
     church: {
-        title: "Старая церковь",
+        title: "Не такая уж и старая церковь",
         year: "1723 год",
         image: "https://images.unsplash.com/photo-1548625149-fc4a29cf7092?w=800",
         description: `
