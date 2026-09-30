@@ -12,8 +12,9 @@
             --color-water-deep: #2B6B7A;
             --color-water-light: #7FB5C0;
             --color-bank: #C9A66B;
-            --color-field-1: #8FA87C;
-            --color-field-2: #6B8E5C;
+            --color-grass-1: #7A996A;
+            --color-grass-2: #6B8E5C;
+            --color-grass-3: #8FA87C;
             --color-bg: #F5F1E8;
             --color-text: #2C2C2C;
             --color-accent: #A85A3C;
@@ -34,8 +35,8 @@
             border-bottom: 1px solid rgba(201, 166, 107, 0.3); 
         }
         .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .site-title { font-family: var(--font-heading); font-size: 1.7rem; font-weight: 700; color: var(--color-water-deep); letter-spacing: 0.5px; }
-        .main-nav { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .site-title { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--color-water-deep); letter-spacing: 0.5px; }
+        .main-nav { display: flex; gap: 1.2rem; flex-wrap: wrap; }
         .nav-link { font-size: 0.9rem; color: var(--color-text); text-decoration: none; transition: color 0.3s ease; position: relative; font-weight: 400; }
         .nav-link:hover { color: var(--color-accent); }
         .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--color-accent); transition: width 0.3s ease; }
@@ -45,14 +46,13 @@
         .landing-page { padding-top: 70px; }
         .map-container { 
             position: relative; width: 100%; min-height: 85vh; 
-            background: linear-gradient(160deg, #e8f0e0 0%, #d4e4c8 40%, #c9d9b8 100%); 
+            background-color: var(--color-grass-1);
             overflow: hidden; 
         }
         
-        /* Многослойная SVG карта */
+        /* SVG карта */
         .channels-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        /* Анимация бликов на воде */
         .water-shimmer {
             animation: shimmer 6s ease-in-out infinite alternate;
         }
@@ -61,102 +61,117 @@
             100% { opacity: 0.7; stroke-dashoffset: -20; }
         }
 
-        /* Сетка островков */
-        .islands-grid { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; 
-            display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); 
-            padding: 3rem 2rem; gap: 1.5rem; align-items: center; justify-items: center; 
-        }
-        
+        /* Карточки-островки (абсолютное позиционирование для привязки к реке) */
         .island-card { 
-            background: rgba(245, 241, 232, 0.92); 
-            padding: 1.2rem 1.5rem; border-radius: 12px; 
-            box-shadow: 0 8px 25px rgba(43, 107, 122, 0.15); 
+            position: absolute;
+            background: rgba(245, 241, 232, 0.95); 
+            padding: 1rem 1.2rem; border-radius: 10px; 
+            box-shadow: 0 6px 20px rgba(43, 107, 122, 0.15); 
             text-align: center; transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
             border: 1px solid rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-            cursor: pointer; max-width: 220px; width: 100%;
-            position: relative;
-        }
-        .island-card::before {
-            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
-            border-radius: 14px; background: linear-gradient(135deg, var(--color-water-light), var(--color-bank));
-            z-index: -1; opacity: 0; transition: opacity 0.4s ease;
+            cursor: pointer; width: 190px; z-index: 5;
         }
         .island-card:hover { 
-            transform: translateY(-6px) scale(1.02); 
-            box-shadow: 0 15px 35px rgba(43, 107, 122, 0.25); 
+            transform: translateY(-5px) scale(1.03); 
+            box-shadow: 0 12px 30px rgba(43, 107, 122, 0.25); 
             background: rgba(245, 241, 232, 0.98);
+            border-color: var(--color-water-light);
         }
-        .island-card:hover::before { opacity: 0.3; }
-        .island-card h3 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-water-deep); margin-bottom: 0.3rem; font-weight: 700; }
-        .island-card p { font-size: 0.85rem; color: var(--color-text); opacity: 0.8; font-weight: 300; }
+        .island-card h3 { font-family: var(--font-heading); font-size: 1.05rem; color: var(--color-water-deep); margin-bottom: 0.2rem; font-weight: 700; }
+        .island-card p { font-size: 0.8rem; color: var(--color-text); opacity: 0.8; font-weight: 300; line-height: 1.3; }
 
-        /* Позиционирование островков */
-        .island-home { grid-column: 1; grid-row: 2; }
-        .island-mission { grid-column: 2; grid-row: 1; }
-        .island-photos { grid-column: 3; grid-row: 2; }
-        .island-oral { grid-column: 4; grid-row: 2; }
-        .island-articles { grid-column: 4; grid-row: 1; }
-        .island-events { grid-column: 2; grid-row: 3; }
-        .island-about { grid-column: 3; grid-row: 3; }
+        /* Привязка карточек к координатам реки (в процентах для адаптивности) */
+        .island-home { top: 42%; left: 12%; }
+        .island-mission { top: 18%; left: 38%; }
+        .island-photos { top: 42%; left: 50%; transform: translateX(-50%); }
+        .island-photos:hover { transform: translateX(-50%) translateY(-5px) scale(1.03); }
+        .island-oral { top: 72%; left: 82%; }
+        .island-articles { top: 22%; left: 80%; }
+        .island-events { top: 75%; left: 15%; }
+        .island-about { top: 42%; left: 88%; }
 
         /* Приветственный блок */
         .welcome-section { 
-            background: var(--color-bg); padding: 4rem 2rem; text-align: center; 
+            background: var(--color-bg); padding: 3.5rem 2rem; text-align: center; 
             border-top: 4px solid var(--color-bank);
             position: relative;
         }
         .welcome-section::before {
-            content: '~~~'; position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
-            color: var(--color-water-light); font-size: 1.5rem; letter-spacing: 10px; opacity: 0.6;
+            content: '~~~'; position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+            color: var(--color-water-light); font-size: 1.5rem; letter-spacing: 12px; opacity: 0.6;
         }
         .welcome-content { max-width: 650px; margin: 0 auto; }
-        .welcome-title { font-family: var(--font-heading); font-size: 2.4rem; color: var(--color-water-deep); margin-bottom: 1.2rem; line-height: 1.2; }
-        .welcome-text { font-size: 1.1rem; margin-bottom: 2rem; color: var(--color-text); line-height: 1.7; }
+        .welcome-title { font-family: var(--font-heading); font-size: 2.2rem; color: var(--color-water-deep); margin-bottom: 1rem; line-height: 1.2; }
+        .welcome-text { font-size: 1.05rem; margin-bottom: 1.8rem; color: var(--color-text); line-height: 1.7; }
         .cta-button { 
-            display: inline-block; padding: 1rem 2.5rem; background: var(--color-accent); 
+            display: inline-block; padding: 0.9rem 2.2rem; background: var(--color-accent); 
             color: white; text-decoration: none; border-radius: 50px; font-weight: 500; 
             transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(168, 90, 60, 0.3);
         }
         .cta-button:hover { background: var(--color-water-deep); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(43, 107, 122, 0.4); }
 
         /* Футер */
-        .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 2rem; }
-        .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.9rem; }
+        .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 1.5rem; }
+        .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.85rem; }
 
         /* Уведомления */
         .notification { 
             position: fixed; top: 90px; right: 20px; background: var(--color-water-deep); 
-            color: white; padding: 1rem 1.5rem; border-radius: 8px; 
+            color: white; padding: 0.9rem 1.3rem; border-radius: 8px; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 10000; 
             animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            max-width: 320px; font-size: 0.9rem; border-left: 4px solid var(--color-bank);
+            max-width: 320px; font-size: 0.85rem; border-left: 4px solid var(--color-bank);
         }
         @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
 
-        /* Адаптивность */
-        @media (max-width: 1024px) {
-            .islands-grid { grid-template-columns: repeat(3, 1fr); padding: 2rem 1rem; }
-            .island-home { grid-column: 1; grid-row: 1; } .island-mission { grid-column: 2; grid-row: 1; }
-            .island-photos { grid-column: 3; grid-row: 1; } .island-oral { grid-column: 1; grid-row: 2; }
-            .island-articles { grid-column: 2; grid-row: 2; } .island-events { grid-column: 3; grid-row: 2; }
-            .island-about { grid-column: 2; grid-row: 3; }
-        }
+        /* ===== МОБИЛЬНАЯ ВЕРСИЯ: Вертикальная река ===== */
         @media (max-width: 768px) {
             .header-content { flex-direction: column; align-items: center; text-align: center; }
-            .site-title { font-size: 1.4rem; }
-            .main-nav { justify-content: center; gap: 0.8rem; }
-            .nav-link { font-size: 0.85rem; }
-            .islands-grid { grid-template-columns: 1fr; grid-template-rows: auto; padding: 1.5rem 1rem; gap: 1rem; }
-            .island-home, .island-mission, .island-photos, .island-oral, .island-articles, .island-events, .island-about { 
-                grid-column: 1; 
+            .site-title { font-size: 1.3rem; }
+            .main-nav { justify-content: center; gap: 0.6rem; }
+            .nav-link { font-size: 0.8rem; }
+            
+            .map-container { min-height: auto; padding: 2rem 0; background: var(--color-grass-1); }
+            
+            /* Переопределяем абсолютное позиционирование для мобильных */
+            .island-card {
+                position: relative;
+                top: auto !important;
+                left: auto !important;
+                transform: none !important;
+                width: 85%;
+                max-width: 320px;
+                margin: 0 auto 1.5rem auto;
             }
-            .island-home { grid-row: 1; } .island-mission { grid-row: 2; } .island-photos { grid-row: 3; }
-            .island-oral { grid-row: 4; } .island-articles { grid-row: 5; } .island-events { grid-row: 6; } .island-about { grid-row: 7; }
-            .welcome-title { font-size: 1.8rem; }
-            .welcome-text { font-size: 1rem; }
+            .island-card:hover { transform: translateY(-3px) scale(1.02) !important; }
+            
+            /* Визуальная вертикальная река по центру для мобильных */
+            .map-container::before {
+                content: '';
+                position: absolute;
+                top: 0; left: 50%;
+                transform: translateX(-50%);
+                width: 40px;
+                height: 100%;
+                background: linear-gradient(to bottom, var(--color-water-light), var(--color-water-deep), var(--color-water-light));
+                border-radius: 20px;
+                z-index: 1;
+                opacity: 0.6;
+            }
+            
+            /* Чередование карточек слева и справа от "реки" */
+            .island-home { margin-left: 5%; }
+            .island-mission { margin-right: 5%; }
+            .island-photos { margin-left: 5%; }
+            .island-events { margin-right: 5%; }
+            .island-oral { margin-left: 5%; }
+            .island-articles { margin-right: 5%; }
+            .island-about { margin-left: 5%; }
+
+            .welcome-title { font-size: 1.7rem; }
+            .welcome-text { font-size: 0.95rem; }
         }
     </style>
 </head>
@@ -177,86 +192,84 @@
 
     <main class="landing-page">
         <div class="map-container">
-            <!-- Многослойная SVG карта мелиоративной системы -->
             <svg class="channels-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <!-- Градиент для глубокой воды -->
+                    <!-- Паттерн травы: создаёт ощущение живого поля, а не плоского цвета -->
+                    <pattern id="grassTexture" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                        <rect width="60" height="60" fill="#7A996A"/>
+                        <!-- Травинки и неровности -->
+                        <path d="M10 50 Q15 20 20 50" stroke="#8FA87C" stroke-width="2" fill="none" opacity="0.5"/>
+                        <path d="M35 55 Q40 25 45 55" stroke="#6B8E5C" stroke-width="2" fill="none" opacity="0.6"/>
+                        <path d="M50 45 Q55 15 60 45" stroke="#9BB88A" stroke-width="1.5" fill="none" opacity="0.4"/>
+                        <circle cx="25" cy="15" r="2" fill="#9BB88A" opacity="0.3"/>
+                        <circle cx="5" cy="35" r="1.5" fill="#5A7A4C" opacity="0.4"/>
+                        <path d="M0 60 L10 50 L20 60" fill="#6B8E5C" opacity="0.3"/>
+                    </pattern>
+
                     <linearGradient id="waterDeep" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stop-color="#3a7d8c" />
                         <stop offset="50%" stop-color="#2B6B7A" />
                         <stop offset="100%" stop-color="#1f5563" />
                     </linearGradient>
-                    <!-- Градиент для мелкой воды/бликов -->
-                    <linearGradient id="waterLight" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#7FB5C0" stop-opacity="0" />
-                        <stop offset="50%" stop-color="#7FB5C0" stop-opacity="0.6" />
-                        <stop offset="100%" stop-color="#7FB5C0" stop-opacity="0" />
-                    </linearGradient>
                 </defs>
                 
-                <!-- Слой 1: Поля и земля (фон уже задан в CSS, это дополнительные текстуры) -->
-                <ellipse cx="150" cy="200" rx="300" ry="250" fill="#8FA87C" opacity="0.3"/>
-                <ellipse cx="1050" cy="600" rx="350" ry="280" fill="#6B8E5C" opacity="0.25"/>
-                <ellipse cx="600" cy="100" rx="250" ry="150" fill="#8FA87C" opacity="0.2"/>
-                <ellipse cx="300" cy="700" rx="200" ry="180" fill="#7a996a" opacity="0.2"/>
+                <!-- Слой 1: Текстурированная трава на весь фон -->
+                <rect width="1200" height="800" fill="url(#grassTexture)" />
 
-                <!-- Слой 2: Берега рек (широкие, песчаные) -->
-                <path d="M -50 350 C 200 250, 400 550, 650 380 S 1100 200, 1250 350" fill="none" stroke="#C9A66B" stroke-width="130" stroke-linecap="round" opacity="0.9"/>
-                <path d="M 550 380 C 580 250, 620 150, 680 50" fill="none" stroke="#C9A66B" stroke-width="90" stroke-linecap="round" opacity="0.9"/>
-                <path d="M 850 300 C 900 450, 950 550, 1050 650" fill="none" stroke="#C9A66B" stroke-width="80" stroke-linecap="round" opacity="0.9"/>
-                <path d="M 200 400 C 220 500, 280 600, 380 680" fill="none" stroke="#C9A66B" stroke-width="70" stroke-linecap="round" opacity="0.9"/>
+                <!-- Слой 2: Берега рек (песчаная кромка между травой и водой) -->
+                <!-- Главная река -->
+                <path d="M -50 400 C 200 300, 400 500, 600 400 S 1000 300, 1250 400" fill="none" stroke="#C9A66B" stroke-width="110" stroke-linecap="round" opacity="0.9"/>
+                <!-- Верхнее ответвление (Миссия) -->
+                <path d="M 500 380 C 500 250, 450 150, 450 120" fill="none" stroke="#C9A66B" stroke-width="80" stroke-linecap="round" opacity="0.9"/>
+                <!-- Нижнее левое ответвление (Мероприятия) -->
+                <path d="M 250 420 C 250 550, 150 650, 150 720" fill="none" stroke="#C9A66B" stroke-width="70" stroke-linecap="round" opacity="0.9"/>
+                <!-- Нижнее правое ответвление (Устная история) -->
+                <path d="M 900 380 C 950 500, 1050 600, 1050 680" fill="none" stroke="#C9A66B" stroke-width="75" stroke-linecap="round" opacity="0.9"/>
+                <!-- Верхнее правое ответвление (Статьи) -->
+                <path d="M 850 350 C 950 250, 1050 200, 1100 180" fill="none" stroke="#C9A66B" stroke-width="60" stroke-linecap="round" opacity="0.9"/>
 
                 <!-- Слой 3: Основная вода -->
-                <path d="M -50 350 C 200 250, 400 550, 650 380 S 1100 200, 1250 350" fill="none" stroke="url(#waterDeep)" stroke-width="90" stroke-linecap="round"/>
-                <path d="M 550 380 C 580 250, 620 150, 680 50" fill="none" stroke="url(#waterDeep)" stroke-width="50" stroke-linecap="round"/>
-                <path d="M 850 300 C 900 450, 950 550, 1050 650" fill="none" stroke="url(#waterDeep)" stroke-width="40" stroke-linecap="round"/>
-                <path d="M 200 400 C 220 500, 280 600, 380 680" fill="none" stroke="url(#waterDeep)" stroke-width="30" stroke-linecap="round"/>
+                <path d="M -50 400 C 200 300, 400 500, 600 400 S 1000 300, 1250 400" fill="none" stroke="url(#waterDeep)" stroke-width="70" stroke-linecap="round"/>
+                <path d="M 500 380 C 500 250, 450 150, 450 120" fill="none" stroke="url(#waterDeep)" stroke-width="40" stroke-linecap="round"/>
+                <path d="M 250 420 C 250 550, 150 650, 150 720" fill="none" stroke="url(#waterDeep)" stroke-width="30" stroke-linecap="round"/>
+                <path d="M 900 380 C 950 500, 1050 600, 1050 680" fill="none" stroke="url(#waterDeep)" stroke-width="35" stroke-linecap="round"/>
+                <path d="M 850 350 C 950 250, 1050 200, 1100 180" fill="none" stroke="url(#waterDeep)" stroke-width="25" stroke-linecap="round"/>
 
-                <!-- Слой 4: Блики и рябь на воде (анимированные) -->
-                <path class="water-shimmer" d="M 0 330 C 200 230, 400 530, 650 360 S 1100 180, 1250 330" fill="none" stroke="#7FB5C0" stroke-width="3" stroke-dasharray="10, 15" opacity="0.5"/>
-                <path class="water-shimmer" d="M 50 370 C 250 270, 450 570, 700 400 S 1150 220, 1200 370" fill="none" stroke="#a8d5e0" stroke-width="2" stroke-dasharray="5, 20" opacity="0.4" style="animation-delay: 1s;"/>
-                <path class="water-shimmer" d="M 560 370 C 590 240, 630 140, 690 40" fill="none" stroke="#7FB5C0" stroke-width="2" stroke-dasharray="8, 12" opacity="0.5" style="animation-delay: 2s;"/>
-                
-                <!-- Слой 5: Декоративные "островки" суши под карточками (чтобы они не висели в воздухе) -->
-                <ellipse cx="150" cy="400" rx="110" ry="85" fill="#C9A66B" opacity="0.4"/>
-                <ellipse cx="450" cy="180" rx="120" ry="90" fill="#C9A66B" opacity="0.4"/>
-                <ellipse cx="750" cy="400" rx="130" ry="100" fill="#C9A66B" opacity="0.4"/>
-                <ellipse cx="1050" cy="380" rx="110" ry="85" fill="#C9A66B" opacity="0.4"/>
-                <ellipse cx="1050" cy="650" rx="120" ry="90" fill="#C9A66B" opacity="0.4"/>
-                <ellipse cx="400" cy="650" rx="115" ry="85" fill="#C9A66B" opacity="0.4"/>
-                <ellipse cx="700" cy="650" rx="110" ry="80" fill="#C9A66B" opacity="0.4"/>
+                <!-- Слой 4: Блики и рябь на воде -->
+                <path class="water-shimmer" d="M 0 385 C 200 285, 400 485, 600 385 S 1000 285, 1250 385" fill="none" stroke="#7FB5C0" stroke-width="3" stroke-dasharray="10, 15" opacity="0.6"/>
+                <path class="water-shimmer" d="M 50 415 C 250 315, 450 515, 650 415 S 1050 315, 1200 415" fill="none" stroke="#a8d5e0" stroke-width="2" stroke-dasharray="5, 20" opacity="0.5" style="animation-delay: 1.5s;"/>
+                <path class="water-shimmer" d="M 510 370 C 510 240, 460 140, 460 110" fill="none" stroke="#7FB5C0" stroke-width="2" stroke-dasharray="8, 12" opacity="0.6" style="animation-delay: 0.5s;"/>
+                <path class="water-shimmer" d="M 910 370 C 960 490, 1060 590, 1060 670" fill="none" stroke="#7FB5C0" stroke-width="2" stroke-dasharray="6, 14" opacity="0.5" style="animation-delay: 2s;"/>
             </svg>
 
-            <!-- Островки-разделы (HTML поверх SVG) -->
-            <div class="islands-grid">
-                <div class="island-card island-mission" data-section="mission">
-                    <h3>Миссия</h3>
-                    <p>О проекте и целях</p>
-                </div>
-                <div class="island-card island-articles" data-section="articles">
-                    <h3>Статьи</h3>
-                    <p>Исследования и публикации</p>
-                </div>
-                <div class="island-card island-home" data-section="home">
-                    <h3>Главная</h3>
-                    <p>Добро пожаловать</p>
-                </div>
-                <div class="island-card island-photos" data-section="photos">
-                    <h3>Новоселье в снимках</h3>
-                    <p>Фотоархив и документы</p>
-                </div>
-                <div class="island-card island-oral" data-section="oral-history">
-                    <h3>Устная история</h3>
-                    <p>Воспоминания жителей</p>
-                </div>
-                <div class="island-card island-events" data-section="events">
-                    <h3>Мероприятия</h3>
-                    <p>Анонсы и календарь</p>
-                </div>
-                <div class="island-card island-about" data-section="about">
-                    <h3>О музее</h3>
-                    <p>Контакты и реквизиты</p>
-                </div>
+            <!-- Карточки-островки, привязанные к ответвлениям -->
+            <div class="island-card island-home" data-section="home">
+                <h3>Главная</h3>
+                <p>Добро пожаловать</p>
+            </div>
+            <div class="island-card island-mission" data-section="mission">
+                <h3>Миссия</h3>
+                <p>О проекте и целях</p>
+            </div>
+            <div class="island-card island-photos" data-section="photos">
+                <h3>Новоселье в снимках</h3>
+                <p>Фотоархив и документы</p>
+            </div>
+            <div class="island-card island-oral" data-section="oral-history">
+                <h3>Устная история</h3>
+                <p>Воспоминания жителей</p>
+            </div>
+            <div class="island-card island-articles" data-section="articles">
+                <h3>Статьи</h3>
+                <p>Исследования и публикации</p>
+            </div>
+            <div class="island-card island-events" data-section="events">
+                <h3>Мероприятия</h3>
+                <p>Анонсы и календарь</p>
+            </div>
+            <div class="island-card island-about" data-section="about">
+                <h3>О музее</h3>
+                <p>Контакты и реквизиты</p>
             </div>
         </div>
 
@@ -301,17 +314,20 @@
                 }, 3000);
             }
 
-            // Обработка кликов по всем интерактивным элементам
             document.querySelectorAll('[data-section]').forEach(el => {
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
                     const section = this.getAttribute('data-section');
                     const name = sectionNames[section] || section;
                     
-                    // Имитация эффекта "перетекания" перед показом уведомления
-                    this.style.transform = 'scale(0.95)';
+                    this.style.transform = this.classList.contains('island-photos') 
+                        ? 'translateX(-50%) scale(0.95)' 
+                        : 'scale(0.95)';
+                        
                     setTimeout(() => {
-                        this.style.transform = '';
+                        this.style.transform = this.classList.contains('island-photos') 
+                            ? 'translateX(-50%)' 
+                            : '';
                         showNotification('Раздел «' + name + '» скоро будет доступен. Мы подключаем архив!');
                     }, 150);
                 });
