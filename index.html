@@ -61,7 +61,7 @@
             100% { opacity: 0.7; stroke-dashoffset: -20; }
         }
 
-        /* Карточки-островки (абсолютное позиционирование для привязки к реке) */
+        /* Карточки-островки */
         .island-card { 
             position: absolute;
             background: rgba(245, 241, 232, 0.95); 
@@ -81,15 +81,15 @@
         .island-card h3 { font-family: var(--font-heading); font-size: 1.05rem; color: var(--color-water-deep); margin-bottom: 0.2rem; font-weight: 700; }
         .island-card p { font-size: 0.8rem; color: var(--color-text); opacity: 0.8; font-weight: 300; line-height: 1.3; }
 
-        /* Привязка карточек к координатам реки (в процентах для адаптивности) */
+        /* Привязка карточек к координатам реки */
         .island-home { top: 42%; left: 12%; }
         .island-mission { top: 18%; left: 38%; }
         .island-photos { top: 42%; left: 50%; transform: translateX(-50%); }
         .island-photos:hover { transform: translateX(-50%) translateY(-5px) scale(1.03); }
         .island-oral { top: 72%; left: 82%; }
-        .island-articles { top: 22%; left: 80%; }
+        .island-articles { top: 14%; left: 80%; }
         .island-events { top: 75%; left: 15%; }
-        .island-about { top: 42%; left: 88%; }
+        .island-about { top: 42%; left: 78%; }
 
         /* Приветственный блок */
         .welcome-section { 
@@ -126,7 +126,7 @@
         @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
 
-        /* ===== МОБИЛЬНАЯ ВЕРСИЯ: Вертикальная река ===== */
+        /* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
         @media (max-width: 768px) {
             .header-content { flex-direction: column; align-items: center; text-align: center; }
             .site-title { font-size: 1.3rem; }
@@ -135,7 +135,6 @@
             
             .map-container { min-height: auto; padding: 2rem 0; background: var(--color-grass-1); }
             
-            /* Переопределяем абсолютное позиционирование для мобильных */
             .island-card {
                 position: relative;
                 top: auto !important;
@@ -147,7 +146,6 @@
             }
             .island-card:hover { transform: translateY(-3px) scale(1.02) !important; }
             
-            /* Визуальная вертикальная река по центру для мобильных */
             .map-container::before {
                 content: '';
                 position: absolute;
@@ -161,7 +159,6 @@
                 opacity: 0.6;
             }
             
-            /* Чередование карточек слева и справа от "реки" */
             .island-home { margin-left: 5%; }
             .island-mission { margin-right: 5%; }
             .island-photos { margin-left: 5%; }
@@ -194,10 +191,8 @@
         <div class="map-container">
             <svg class="channels-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <!-- Паттерн травы: создаёт ощущение живого поля, а не плоского цвета -->
                     <pattern id="grassTexture" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
                         <rect width="60" height="60" fill="#7A996A"/>
-                        <!-- Травинки и неровности -->
                         <path d="M10 50 Q15 20 20 50" stroke="#8FA87C" stroke-width="2" fill="none" opacity="0.5"/>
                         <path d="M35 55 Q40 25 45 55" stroke="#6B8E5C" stroke-width="2" fill="none" opacity="0.6"/>
                         <path d="M50 45 Q55 15 60 45" stroke="#9BB88A" stroke-width="1.5" fill="none" opacity="0.4"/>
@@ -213,36 +208,30 @@
                     </linearGradient>
                 </defs>
                 
-                <!-- Слой 1: Текстурированная трава на весь фон -->
                 <rect width="1200" height="800" fill="url(#grassTexture)" />
 
-                <!-- Слой 2: Берега рек (песчаная кромка между травой и водой) -->
-                <!-- Главная река -->
+                <!-- Берега -->
                 <path d="M -50 400 C 200 300, 400 500, 600 400 S 1000 300, 1250 400" fill="none" stroke="#C9A66B" stroke-width="110" stroke-linecap="round" opacity="0.9"/>
-                <!-- Верхнее ответвление (Миссия) -->
                 <path d="M 500 380 C 500 250, 450 150, 450 120" fill="none" stroke="#C9A66B" stroke-width="80" stroke-linecap="round" opacity="0.9"/>
-                <!-- Нижнее левое ответвление (Мероприятия) -->
                 <path d="M 250 420 C 250 550, 150 650, 150 720" fill="none" stroke="#C9A66B" stroke-width="70" stroke-linecap="round" opacity="0.9"/>
-                <!-- Нижнее правое ответвление (Устная история) -->
                 <path d="M 900 380 C 950 500, 1050 600, 1050 680" fill="none" stroke="#C9A66B" stroke-width="75" stroke-linecap="round" opacity="0.9"/>
-                <!-- Верхнее правое ответвление (Статьи) -->
                 <path d="M 850 350 C 950 250, 1050 200, 1100 180" fill="none" stroke="#C9A66B" stroke-width="60" stroke-linecap="round" opacity="0.9"/>
 
-                <!-- Слой 3: Основная вода -->
+                <!-- Вода -->
                 <path d="M -50 400 C 200 300, 400 500, 600 400 S 1000 300, 1250 400" fill="none" stroke="url(#waterDeep)" stroke-width="70" stroke-linecap="round"/>
                 <path d="M 500 380 C 500 250, 450 150, 450 120" fill="none" stroke="url(#waterDeep)" stroke-width="40" stroke-linecap="round"/>
                 <path d="M 250 420 C 250 550, 150 650, 150 720" fill="none" stroke="url(#waterDeep)" stroke-width="30" stroke-linecap="round"/>
                 <path d="M 900 380 C 950 500, 1050 600, 1050 680" fill="none" stroke="url(#waterDeep)" stroke-width="35" stroke-linecap="round"/>
                 <path d="M 850 350 C 950 250, 1050 200, 1100 180" fill="none" stroke="url(#waterDeep)" stroke-width="25" stroke-linecap="round"/>
 
-                <!-- Слой 4: Блики и рябь на воде -->
+                <!-- Блики -->
                 <path class="water-shimmer" d="M 0 385 C 200 285, 400 485, 600 385 S 1000 285, 1250 385" fill="none" stroke="#7FB5C0" stroke-width="3" stroke-dasharray="10, 15" opacity="0.6"/>
                 <path class="water-shimmer" d="M 50 415 C 250 315, 450 515, 650 415 S 1050 315, 1200 415" fill="none" stroke="#a8d5e0" stroke-width="2" stroke-dasharray="5, 20" opacity="0.5" style="animation-delay: 1.5s;"/>
                 <path class="water-shimmer" d="M 510 370 C 510 240, 460 140, 460 110" fill="none" stroke="#7FB5C0" stroke-width="2" stroke-dasharray="8, 12" opacity="0.6" style="animation-delay: 0.5s;"/>
                 <path class="water-shimmer" d="M 910 370 C 960 490, 1060 590, 1060 670" fill="none" stroke="#7FB5C0" stroke-width="2" stroke-dasharray="6, 14" opacity="0.5" style="animation-delay: 2s;"/>
             </svg>
 
-            <!-- Карточки-островки, привязанные к ответвлениям -->
+            <!-- Карточки -->
             <div class="island-card island-home" data-section="home">
                 <h3>Главная</h3>
                 <p>Добро пожаловать</p>
