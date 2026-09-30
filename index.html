@@ -1,357 +1,178 @@
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
-<style>
-    /* ===== CSS Переменные ===== */
-    :root {
-        --color-water: #2B6B7A;
-        --color-water-light: #7FB5C0;
-        --color-bank: #C9A66B;
-        --color-field: #6B8E5C;
-        --color-bg: #F5F1E8;
-        --color-text: #2C2C2C;
-        --color-accent: #A85A3C;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новосельские истории — Цифровой музей</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-water: #2B6B7A;
+            --color-water-light: #7FB5C0;
+            --color-bank: #C9A66B;
+            --color-field: #6B8E5C;
+            --color-bg: #F5F1E8;
+            --color-text: #2C2C2C;
+            --color-accent: #A85A3C;
+            --font-heading: 'Playfair Display', Georgia, serif;
+            --font-body: 'Inter', -apple-system, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; min-height: 100vh; }
+        body { font-family: var(--font-body); color: var(--color-text); background-color: var(--color-bg); line-height: 1.6; }
         
-        --font-heading: 'Playfair Display', serif;
-        --font-body: 'Inter', sans-serif;
+        .site-header { position: fixed; top: 0; left: 0; right: 0; background: rgba(245, 241, 232, 0.97); z-index: 1000; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-bottom: 1px solid rgba(201, 166, 107, 0.3); }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .site-title { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--color-water); }
+        .main-nav { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+        .nav-link { font-size: 0.9rem; color: var(--color-text); text-decoration: none; transition: color 0.3s ease; position: relative; }
+        .nav-link:hover { color: var(--color-accent); }
+        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--color-accent); transition: width 0.3s ease; }
+        .nav-link:hover::after { width: 100%; }
+
+        .landing-page { padding-top: 70px; }
+        .map-container { position: relative; width: 100%; min-height: 80vh; background: linear-gradient(135deg, #e8f0e0 0%, #d4e4c8 50%, #c9d9b8 100%); overflow: hidden; }
+        .channels-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        --transition-smooth: all 0.3s ease;
-    }
+        .islands-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); padding: 2rem; gap: 1rem; align-items: center; justify-items: center; }
+        .island-card { background: rgba(245, 241, 232, 0.97); padding: 1rem 1.2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.12); text-align: center; transition: all 0.3s ease; border: 2px solid rgba(201, 166, 107, 0.4); cursor: pointer; max-width: 200px; width: 100%; }
+        .island-card:hover { box-shadow: 0 8px 25px rgba(43, 107, 122, 0.25); transform: translateY(-4px); border-color: var(--color-water-light); }
+        .island-card h3 { font-family: var(--font-heading); font-size: 1rem; color: var(--color-water); margin-bottom: 0.2rem; }
+        .island-card p { font-size: 0.8rem; color: var(--color-text); opacity: 0.75; }
 
-    /* ===== Базовые стили ===== */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        .island-home { grid-column: 1; grid-row: 2; }
+        .island-mission { grid-column: 2; grid-row: 1; }
+        .island-photos { grid-column: 3; grid-row: 2; }
+        .island-oral { grid-column: 4; grid-row: 2; }
+        .island-articles { grid-column: 4; grid-row: 1; }
+        .island-events { grid-column: 2; grid-row: 3; }
+        .island-about { grid-column: 3; grid-row: 3; }
 
-    html {
-        scroll-behavior: smooth;
-    }
+        .welcome-section { background: var(--color-bg); padding: 3rem 1.5rem; text-align: center; border-top: 3px solid var(--color-bank); }
+        .welcome-content { max-width: 600px; margin: 0 auto; }
+        .welcome-title { font-family: var(--font-heading); font-size: 2rem; color: var(--color-water); margin-bottom: 1rem; }
+        .welcome-text { font-size: 1.05rem; margin-bottom: 1.5rem; color: var(--color-text); }
+        .cta-button { display: inline-block; padding: 0.9rem 2rem; background: var(--color-accent); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; }
+        .cta-button:hover { background: var(--color-water); transform: translateY(-2px); }
 
-    body {
-        font-family: var(--font-body);
-        color: var(--color-text);
-        background-color: var(--color-bg);
-        line-height: 1.6;
-        overflow-x: hidden;
-    }
+        .site-footer { background: var(--color-water); color: white; text-align: center; padding: 1.5rem; }
+        .site-footer p { margin: 0.3rem 0; opacity: 0.9; font-size: 0.85rem; }
 
-    /* ===== Шапка ===== */
-    .site-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: rgba(245, 241, 232, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        z-index: 1000;
-        padding: 1rem 2rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+        .notification { position: fixed; top: 90px; right: 20px; background: var(--color-water); color: white; padding: 0.8rem 1.2rem; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 10000; animation: slideIn 0.3s ease; max-width: 300px; font-size: 0.85rem; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
-    .header-content {
-        max-width: 1400px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .site-title {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--color-water);
-        letter-spacing: 0.5px;
-    }
-
-    .main-nav {
-        display: flex;
-        gap: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .nav-link {
-        font-size: 0.95rem;
-        color: var(--color-text);
-        text-decoration: none;
-        transition: var(--transition-smooth);
-        position: relative;
-        font-weight: 400;
-    }
-
-    .nav-link:hover {
-        color: var(--color-accent);
-    }
-
-    .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--color-accent);
-        transition: width 0.3s ease;
-    }
-
-    .nav-link:hover::after {
-        width: 100%;
-    }
-
-    /* ===== Лендинг ===== */
-    .landing-page {
-        min-height: 100vh;
-        padding-top: 80px;
-        position: relative;
-    }
-
-    .map-container {
-        position: relative;
-        width: 100%;
-        height: calc(100vh - 80px);
-        overflow: hidden;
-        background: linear-gradient(135deg, #e8f0e0 0%, #d4e4c8 50%, #c9d9b8 100%);
-    }
-
-    .channels-map {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-
-    /* Анимация каналов */
-    .channel {
-        animation: flow 6s ease-in-out infinite;
-    }
-
-    .channel:nth-child(2) {
-        animation-delay: 1s;
-    }
-
-    .channel:nth-child(3) {
-        animation-delay: 2s;
-    }
-
-    @keyframes flow {
-        0%, 100% {
-            opacity: 0.85;
+        @media (max-width: 900px) {
+            .islands-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; padding: 1rem; }
+            .island-home { grid-column: 1; grid-row: 1; } .island-mission { grid-column: 2; grid-row: 1; }
+            .island-photos { grid-column: 1; grid-row: 2; } .island-oral { grid-column: 2; grid-row: 2; }
+            .island-articles { grid-column: 1; grid-row: 3; } .island-events { grid-column: 2; grid-row: 3; }
+            .island-about { grid-column: 1 / 3; grid-row: 4; }
         }
-        50% {
-            opacity: 1;
+        @media (max-width: 600px) {
+            .header-content { flex-direction: column; align-items: center; }
+            .site-title { font-size: 1.3rem; }
+            .main-nav { justify-content: center; gap: 0.6rem; }
+            .nav-link { font-size: 0.8rem; }
+            .islands-grid { grid-template-columns: 1fr; }
+            .island-home, .island-mission, .island-photos, .island-oral, .island-articles, .island-events, .island-about { grid-column: 1; }
+            .island-home { grid-row: 1; } .island-mission { grid-row: 2; } .island-photos { grid-row: 3; }
+            .island-oral { grid-row: 4; } .island-articles { grid-row: 5; } .island-events { grid-row: 6; } .island-about { grid-row: 7; }
         }
-    }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <h1 class="site-title">Новосельские истории</h1>
+            <nav class="main-nav">
+                <a href="#" class="nav-link" data-section="home">Главная</a>
+                <a href="#" class="nav-link" data-section="mission">Миссия</a>
+                <a href="#" class="nav-link" data-section="photos">Фото</a>
+                <a href="#" class="nav-link" data-section="oral-history">Истории</a>
+                <a href="#" class="nav-link" data-section="articles">Статьи</a>
+                <a href="#" class="nav-link" data-section="events">Мероприятия</a>
+                <a href="#" class="nav-link" data-section="about">О музее</a>
+            </nav>
+        </div>
+    </header>
 
-    /* Островки */
-    .island {
-        cursor: pointer;
-        transition: transform 0.4s ease;
-    }
+    <main class="landing-page">
+        <div class="map-container">
+            <svg class="channels-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#7FB5C0" />
+                        <stop offset="50%" stop-color="#2B6B7A" />
+                        <stop offset="100%" stop-color="#7FB5C0" />
+                    </linearGradient>
+                </defs>
+                <ellipse cx="200" cy="150" rx="250" ry="180" fill="#6B8E5C" opacity="0.25"/>
+                <ellipse cx="1000" cy="650" rx="280" ry="200" fill="#6B8E5C" opacity="0.25"/>
+                <path d="M 0 400 Q 300 340 600 400 T 1200 400" fill="none" stroke="url(#waterGrad)" stroke-width="100" stroke-linecap="round" opacity="0.85"/>
+                <path d="M 500 400 Q 520 280 600 180" fill="none" stroke="url(#waterGrad)" stroke-width="60" stroke-linecap="round" opacity="0.85"/>
+                <path d="M 800 400 Q 830 520 920 620" fill="none" stroke="url(#waterGrad)" stroke-width="60" stroke-linecap="round" opacity="0.85"/>
+                <path d="M 250 400 Q 280 500 360 580" fill="none" stroke="url(#waterGrad)" stroke-width="45" stroke-linecap="round" opacity="0.85"/>
+            </svg>
 
-    .island:hover {
-        transform: scale(1.08);
-    }
+            <div class="islands-grid">
+                <div class="island-card island-mission" data-section="mission"><h3>Миссия</h3><p>О проекте</p></div>
+                <div class="island-card island-articles" data-section="articles"><h3>Статьи</h3><p>Исследования</p></div>
+                <div class="island-card island-home" data-section="home"><h3>Главная</h3><p>Добро пожаловать</p></div>
+                <div class="island-card island-photos" data-section="photos"><h3>Новоселье в снимках</h3><p>Фотоархив</p></div>
+                <div class="island-card island-oral" data-section="oral-history"><h3>Устная история</h3><p>Воспоминания</p></div>
+                <div class="island-card island-events" data-section="events"><h3>Мероприятия</h3><p>Анонсы</p></div>
+                <div class="island-card island-about" data-section="about"><h3>О музее</h3><p>Контакты</p></div>
+            </div>
+        </div>
 
-    .island-card {
-        background: rgba(245, 241, 232, 0.97);
-        padding: 0.8rem 1rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        text-align: center;
-        transition: var(--transition-smooth);
-        border: 1px solid rgba(201, 166, 107, 0.3);
-    }
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <h2 class="welcome-title">Цифровой музей Новоселья</h2>
+                <p class="welcome-text">Сохраняем память о жителях, их историях и судьбах через фотографии, документы и устные свидетельства.</p>
+                <a href="#" class="cta-button" data-section="photos">Исследовать архив</a>
+            </div>
+        </section>
+    </main>
 
-    .island:hover .island-card {
-        box-shadow: 0 8px 25px rgba(43, 107, 122, 0.3);
-        transform: translateY(-3px);
-        border-color: var(--color-water-light);
-    }
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
+            <p>Создано с любовью к родной земле</p>
+        </div>
+    </footer>
 
-    .island-card h3 {
-        font-family: var(--font-heading);
-        font-size: 1rem;
-        color: var(--color-water);
-        margin-bottom: 0.2rem;
-        line-height: 1.2;
-    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sectionNames = {
+                'home': 'Главная', 'mission': 'Миссия', 'photos': 'Новоселье в снимках',
+                'oral-history': 'Устная история', 'articles': 'Статьи', 'events': 'Мероприятия', 'about': 'О музее'
+            };
 
-    .island-card p {
-        font-size: 0.75rem;
-        color: var(--color-text);
-        opacity: 0.75;
-        margin: 0;
-    }
+            function showNotification(message) {
+                const existing = document.querySelector('.notification');
+                if (existing) existing.remove();
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease forwards';
+                    setTimeout(() => notification.remove(), 300);
+                }, 2500);
+            }
 
-    /* Приветственный блок */
-    .welcome-section {
-        position: absolute;
-        bottom: 5%;
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-        background: rgba(245, 241, 232, 0.97);
-        padding: 2rem 3rem;
-        border-radius: 12px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-        max-width: 600px;
-        width: 90%;
-        border: 1px solid rgba(201, 166, 107, 0.3);
-    }
-
-    .welcome-title {
-        font-family: var(--font-heading);
-        font-size: 2.2rem;
-        color: var(--color-water);
-        margin-bottom: 1rem;
-        line-height: 1.2;
-    }
-
-    .welcome-text {
-        font-size: 1.05rem;
-        margin-bottom: 1.5rem;
-        line-height: 1.7;
-        color: var(--color-text);
-    }
-
-    .cta-button {
-        display: inline-block;
-        padding: 0.9rem 2.2rem;
-        background: var(--color-accent);
-        color: white;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: var(--transition-smooth);
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-    }
-
-    .cta-button:hover {
-        background: var(--color-water);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(43, 107, 122, 0.3);
-    }
-
-    /* ===== Футер ===== */
-    .site-footer {
-        background: var(--color-water);
-        color: white;
-        text-align: center;
-        padding: 2rem;
-    }
-
-    .footer-content p {
-        margin: 0.3rem 0;
-        opacity: 0.9;
-        font-size: 0.9rem;
-    }
-
-    /* ===== Уведомления ===== */
-    .notification {
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: var(--color-water);
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-        max-width: 300px;
-        font-size: 0.9rem;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-
-    /* ===== Адаптивность ===== */
-    @media (max-width: 768px) {
-        .site-header {
-            padding: 0.8rem 1rem;
-        }
-
-        .header-content {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .site-title {
-            font-size: 1.4rem;
-        }
-
-        .main-nav {
-            justify-content: center;
-            gap: 0.8rem;
-        }
-
-        .nav-link {
-            font-size: 0.85rem;
-        }
-
-        .channels-map {
-            transform-origin: center center;
-        }
-
-        .welcome-section {
-            padding: 1.5rem;
-        }
-
-        .welcome-title {
-            font-size: 1.6rem;
-        }
-
-        .welcome-text {
-            font-size: 0.95rem;
-        }
-
-        .cta-button {
-            padding: 0.7rem 1.5rem;
-            font-size: 0.9rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .site-title {
-            font-size: 1.2rem;
-        }
-
-        .main-nav {
-            gap: 0.6rem;
-        }
-
-        .nav-link {
-            font-size: 0.75rem;
-        }
-
-        .welcome-title {
-            font-size: 1.3rem;
-        }
-    }
-</style>
+            document.querySelectorAll('[data-section]').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    showNotification('Раздел "' + (sectionNames[section] || section) + '" скоро будет доступен');
+                });
+            });
+            console.log('🌊 Новосельские истории — сайт загружен');
+        });
+    </script>
+</body>
+</html>
