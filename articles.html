@@ -1,1 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статьи — Новосельские истории</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-water-deep: #2B6B7A; --color-water-light: #7FB5C0; --color-bank: #C9A66B;
+            --color-bg: #F5F1E8; --color-text: #2C2C2C; --color-accent: #A85A3C;
+            --font-heading: 'Playfair Display', Georgia, serif; --font-body: 'Inter', -apple-system, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); color: var(--color-text); background-color: var(--color-bg); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .site-header { position: fixed; top: 0; left: 0; right: 0; background: rgba(245, 241, 232, 0.95); backdrop-filter: blur(8px); z-index: 1000; padding: 1rem 2rem; box-shadow: 0 2px 15px rgba(0,0,0,0.06); border-bottom: 1px solid rgba(201, 166, 107, 0.3); }
+        .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .site-title { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--color-water-deep); text-decoration: none; }
+        .main-nav { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+        .nav-link { font-size: 0.9rem; color: var(--color-text); text-decoration: none; transition: color 0.3s ease; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--color-accent); }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--color-accent); }
 
+        .page-content { flex: 1; padding-top: 100px; padding-bottom: 3rem; width: 100%; max-width: 1200px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; }
+        
+        .page-header { margin-bottom: 2rem; text-align: center; }
+        .breadcrumbs { font-size: 0.85rem; color: var(--color-accent); margin-bottom: 0.5rem; }
+        .breadcrumbs a { color: var(--color-accent); text-decoration: none; }
+        .breadcrumbs a:hover { text-decoration: underline; }
+        .page-title { font-family: var(--font-heading); font-size: 2.5rem; color: var(--color-water-deep); margin-bottom: 1rem; }
+        .page-subtitle { font-size: 1.1rem; color: var(--color-text); opacity: 0.8; max-width: 600px; margin: 0 auto; }
+
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; }
+
+        .article-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer; }
+        .article-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(43, 107, 122, 0.2); }
+        
+        .article-image { height: 200px; overflow: hidden; background: #e0e0e0; }
+        .article-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .article-card:hover .article-image img { transform: scale(1.05); }
+
+        .article-content { padding: 1.5rem; }
+        .article-meta { display: flex; gap: 1rem; margin-bottom: 0.8rem; font-size: 0.8rem; opacity: 0.7; }
+        .article-tag { background: rgba(168, 90, 60, 0.1); color: var(--color-accent); padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 500; }
+        .article-title { font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-water-deep); margin-bottom: 0.8rem; line-height: 1.3; }
+        .article-excerpt { font-size: 0.95rem; line-height: 1.6; opacity: 0.85; }
+
+        .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 1.5rem; margin-top: auto; }
+        .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; align-items: center; }
+            .page-title { font-size: 2rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="site-title">Новосельские истории</a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Главная</a>
+                <a href="photos.html" class="nav-link">Фото</a>
+                <a href="oral-history.html" class="nav-link">Истории</a>
+                <a href="articles.html" class="nav-link active">Статьи</a>
+                <a href="events.html" class="nav-link">Мероприятия</a>
+                <a href="about.html" class="nav-link">О музее</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div class="page-header">
+            <div class="breadcrumbs"><a href="index.html">Главная</a> / Статьи</div>
+            <h1 class="page-title">Исследования и публикации</h1>
+            <p class="page-subtitle">Статьи об истории Новоселья, мелиорации и жизни деревни в XX веке</p>
+        </div>
+
+        <div class="articles-grid">
+            <!-- Статья 1 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop" alt="Мелиорация">
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-tag">Мелиорация</span>
+                        <span>12 сентября 2024</span>
+                    </div>
+                    <h2 class="article-title">Как строили главный канал: история 1962-1965 годов</h2>
+                    <p class="article-excerpt">Документальный рассказ о том, как инженеры и местные жители вместе создавали мелиоративную систему, которая изменила ландшафт Новоселья навсегда...</p>
+                </div>
+            </article>
+
+            <!-- Статья 2 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1544211183-497746592219?w=600&h=400&fit=crop" alt="Семья">
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-tag">Быт</span>
+                        <span>5 августа 2024</span>
+                    </div>
+                    <h2 class="article-title">Семейный уклад: как жили в Новоселье в 1950-е</h2>
+                    <p class="article-excerpt">Исследование повседневной жизни деревенских семей: распорядок дня, традиции, взаимоотношения между поколениями...</p>
+                </div>
+            </article>
+
+            <!-- Статья 3 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600&h=400&fit=crop" alt="Природа">
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-tag">Природа</span>
+                        <span>20 июля 2024</span>
+                    </div>
+                    <h2 class="article-title">Флора и фауна поймы: что изменилось после мелиорации</h2>
+                    <p class="article-excerpt">Научно-популярный обзор того, как преобразование ландшафта повлияло на местную экосистему...</p>
+                </div>
+            </article>
+
+            <!-- Статья 4 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=600&h=400&fit=crop" alt="Документы">
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-tag">Архив</span>
+                        <span>3 июня 2024</span>
+                    </div>
+                    <h2 class="article-title">Похозяйственные книги 1938-1941: что они рассказывают</h2>
+                    <p class="article-excerpt">Анализ архивных документов довоенного периода: состав семей, имущество, хозяйственная деятельность...</p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
+        <p>Создано с любовью к родной земле</p>
+    </footer>
+</body>
+</html>
