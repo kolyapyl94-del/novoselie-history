@@ -57,10 +57,6 @@
         .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 1.5rem; }
         .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.85rem; }
 
-        .notification { position: fixed; top: 90px; right: 20px; background: var(--color-water-deep); color: white; padding: 0.9rem 1.3rem; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 10000; animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 320px; font-size: 0.85rem; border-left: 4px solid var(--color-bank); }
-        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
-
         @media (max-width: 768px) {
             .header-content { flex-direction: column; align-items: center; text-align: center; }
             .site-title { font-size: 1.3rem; }
@@ -83,10 +79,10 @@
             <nav class="main-nav">
                 <a href="index.html" class="nav-link">Главная</a>
                 <a href="photos.html" class="nav-link">Фото</a>
-                <a href="#" class="nav-link" data-section="oral-history">Истории</a>
-                <a href="#" class="nav-link" data-section="articles">Статьи</a>
-                <a href="#" class="nav-link" data-section="events">Мероприятия</a>
-                <a href="#" class="nav-link" data-section="about">О музее</a>
+                <a href="oral-history.html" class="nav-link">Истории</a>
+                <a href="articles.html" class="nav-link">Статьи</a>
+                <a href="events.html" class="nav-link">Мероприятия</a>
+                <a href="about.html" class="nav-link">О музее</a>
             </nav>
         </div>
     </header>
@@ -125,16 +121,12 @@
                 <path class="water-shimmer" d="M 910 370 C 960 490, 1060 590, 1060 670" fill="none" stroke="#7FB5C0" stroke-width="2" stroke-dasharray="6, 14" opacity="0.5" style="animation-delay: 2s;"/>
             </svg>
 
-            <a href="photos.html" class="island-card island-photos">
-                <h3>Новоселье в снимках</h3>
-                <p>Фотоархив и документы</p>
-            </a>
-            <div class="island-card island-home" data-section="home"><h3>Главная</h3><p>Добро пожаловать</p></div>
-            <div class="island-card island-mission" data-section="mission"><h3>Миссия</h3><p>О проекте и целях</p></div>
-            <div class="island-card island-oral" data-section="oral-history"><h3>Устная история</h3><p>Воспоминания жителей</p></div>
-            <div class="island-card island-articles" data-section="articles"><h3>Статьи</h3><p>Исследования и публикации</p></div>
-            <div class="island-card island-events" data-section="events"><h3>Мероприятия</h3><p>Анонсы и календарь</p></div>
-            <div class="island-card island-about" data-section="about"><h3>О музее</h3><p>Контакты и реквизиты</p></div>
+            <a href="mission.html" class="island-card island-mission"><h3>Миссия</h3><p>О проекте и целях</p></a>
+            <a href="articles.html" class="island-card island-articles"><h3>Статьи</h3><p>Исследования и публикации</p></a>
+            <a href="photos.html" class="island-card island-photos"><h3>Новоселье в снимках</h3><p>Фотоархив и документы</p></a>
+            <a href="oral-history.html" class="island-card island-oral"><h3>Устная история</h3><p>Воспоминания жителей</p></a>
+            <a href="events.html" class="island-card island-events"><h3>Мероприятия</h3><p>Анонсы и календарь</p></a>
+            <a href="about.html" class="island-card island-about"><h3>О музее</h3><p>Контакты и реквизиты</p></a>
         </div>
 
         <section class="welcome-section">
@@ -147,40 +139,8 @@
     </main>
 
     <footer class="site-footer">
-        <div class="footer-content">
-            <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
-            <p>Создано с любовью к родной земле</p>
-        </div>
+        <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
+        <p>Создано с любовью к родной земле</p>
     </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sectionNames = { 'home': 'Главная', 'mission': 'Миссия', 'oral-history': 'Устная история', 'articles': 'Статьи', 'events': 'Мероприятия', 'about': 'О музее' };
-            function showNotification(message) {
-                const existing = document.querySelector('.notification');
-                if (existing) existing.remove();
-                const notification = document.createElement('div');
-                notification.className = 'notification';
-                notification.textContent = message;
-                document.body.appendChild(notification);
-                setTimeout(() => {
-                    notification.style.animation = 'slideOut 0.4s ease forwards';
-                    setTimeout(() => notification.remove(), 400);
-                }, 3000);
-            }
-            document.querySelectorAll('[data-section]').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const section = this.getAttribute('data-section');
-                    const name = sectionNames[section] || section;
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                        showNotification('Раздел «' + name + '» скоро будет доступен. Мы подключаем архив!');
-                    }, 150);
-                });
-            });
-        });
-    </script>
 </body>
 </html>
