@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О музее — Новосельские истории</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-water-deep: #2B6B7A; --color-water-light: #7FB5C0; --color-bank: #C9A66B;
+            --color-bg: #F5F1E8; --color-text: #2C2C2C; --color-accent: #A85A3C;
+            --font-heading: 'Playfair Display', Georgia, serif; --font-body: 'Inter', -apple-system, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); color: var(--color-text); background-color: var(--color-bg); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .site-header { position: fixed; top: 0; left: 0; right: 0; background: rgba(245, 241, 232, 0.95); backdrop-filter: blur(8px); z-index: 1000; padding: 1rem 2rem; box-shadow: 0 2px 15px rgba(0,0,0,0.06); border-bottom: 1px solid rgba(201, 166, 107, 0.3); }
+        .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .site-title { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--color-water-deep); text-decoration: none; }
+        .main-nav { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+        .nav-link { font-size: 0.9rem; color: var(--color-text); text-decoration: none; transition: color 0.3s ease; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--color-accent); }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--color-accent); }
+
+        .page-content { flex: 1; padding-top: 100px; padding-bottom: 3rem; width: 100%; max-width: 900px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; }
+        
+        .page-header { margin-bottom: 3rem; text-align: center; }
+        .breadcrumbs { font-size: 0.85rem; color: var(--color-accent); margin-bottom: 0.5rem; }
+        .breadcrumbs a { color: var(--color-accent); text-decoration: none; }
+        .breadcrumbs a:hover { text-decoration: underline; }
+        .page-title { font-family: var(--font-heading); font-size: 2.8rem; color: var(--color-water-deep); margin-bottom: 1rem; }
+
+        .about-section { margin-bottom: 3rem; }
+        .about-section h2 { font-family: var(--font-heading); font-size: 1.8rem; color: var(--color-water-deep); margin-bottom: 1rem; border-bottom: 2px solid var(--color-bank); padding-bottom: 0.5rem; }
+        .about-section p { font-size: 1.05rem; line-height: 1.8; margin-bottom: 1rem; }
+
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .contact-card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); text-align: center; }
+        .contact-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .contact-card h3 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--color-water-deep); margin-bottom: 0.8rem; }
+        .contact-card p { font-size: 0.95rem; line-height: 1.6; }
+        .contact-card a { color: var(--color-accent); text-decoration: none; }
+        .contact-card a:hover { text-decoration: underline; }
+
+        .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 1.5rem; margin-top: auto; }
+        .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; align-items: center; }
+            .page-title { font-size: 2rem; }
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="site-title">Новосельские истории</a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Главная</a>
+                <a href="photos.html" class="nav-link">Фото</a>
+                <a href="oral-history.html" class="nav-link">Истории</a>
+                <a href="articles.html" class="nav-link">Статьи</a>
+                <a href="events.html" class="nav-link">Мероприятия</a>
+                <a href="about.html" class="nav-link active">О музее</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div class="page-header">
+            <div class="breadcrumbs"><a href="index.html">Главная</a> / О музее</div>
+            <h1 class="page-title">О проекте</h1>
+        </div>
+
+        <div class="about-section">
+            <h2>Что такое «Новосельские истории»?</h2>
+            <p>Это цифровой музей, созданный для сохранения памяти о жителях деревни Новоселье. Мы собираем фотографии, документы, устные свидетельства и семейные истории, чтобы ни одна судьба не была забыта.</p>
+            <p>Проект начался в 2024 году с идеи оцифровать семейный архив. Сегодня это полноценная платформа, где каждый может найти материалы о своей семье, узнать историю родного края и поделиться своими воспоминаниями.</p>
+        </div>
+
+        <div class="about-section">
+            <h2>Как мы работаем</h2>
+            <p>Мы сотрудничаем с местными жителями, краеведами, историками и архивистами. Наша команда оцифровывает фотографии, записывает интервью, исследует документы и публикует статьи об истории Новоселья.</p>
+            <p>Все материалы хранятся в открытом доступе и бесплатны для использования в образовательных и исследовательских целях.</p>
+        </div>
+
+        <div class="about-section">
+            <h2>Контакты</h2>
+            <p>Если у вас есть фотографии, документы или истории, которыми вы хотите поделиться, свяжитесь с нами. Мы всегда рады новым материалам и сотрудничеству.</p>
+            
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📧</div>
+                    <h3>Email</h3>
+                    <p><a href="mailto:info@novoselye-museum.ru">info@novoselye-museum.ru</a></p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📱</div>
+                    <h3>Телефон</h3>
+                    <p>+7 (XXX) XXX-XX-XX</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📍</div>
+                    <h3>Адрес</h3>
+                    <p>дер. Новоселье,<br>Районный дом культуры</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
+        <p>Создано с любовью к родной земле</p>
+    </footer>
+</body>
+</html>
