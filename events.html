@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мероприятия — Новосельские истории</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-water-deep: #2B6B7A; --color-water-light: #7FB5C0; --color-bank: #C9A66B;
+            --color-bg: #F5F1E8; --color-text: #2C2C2C; --color-accent: #A85A3C;
+            --font-heading: 'Playfair Display', Georgia, serif; --font-body: 'Inter', -apple-system, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); color: var(--color-text); background-color: var(--color-bg); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .site-header { position: fixed; top: 0; left: 0; right: 0; background: rgba(245, 241, 232, 0.95); backdrop-filter: blur(8px); z-index: 1000; padding: 1rem 2rem; box-shadow: 0 2px 15px rgba(0,0,0,0.06); border-bottom: 1px solid rgba(201, 166, 107, 0.3); }
+        .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .site-title { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--color-water-deep); text-decoration: none; }
+        .main-nav { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+        .nav-link { font-size: 0.9rem; color: var(--color-text); text-decoration: none; transition: color 0.3s ease; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--color-accent); }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--color-accent); }
+
+        .page-content { flex: 1; padding-top: 100px; padding-bottom: 3rem; width: 100%; max-width: 900px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; }
+        
+        .page-header { margin-bottom: 2rem; text-align: center; }
+        .breadcrumbs { font-size: 0.85rem; color: var(--color-accent); margin-bottom: 0.5rem; }
+        .breadcrumbs a { color: var(--color-accent); text-decoration: none; }
+        .breadcrumbs a:hover { text-decoration: underline; }
+        .page-title { font-family: var(--font-heading); font-size: 2.5rem; color: var(--color-water-deep); margin-bottom: 1rem; }
+        .page-subtitle { font-size: 1.1rem; color: var(--color-text); opacity: 0.8; max-width: 600px; margin: 0 auto; }
+
+        .events-list { margin-top: 2rem; }
+
+        .event-card { background: white; border-radius: 10px; padding: 2rem; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-left: 4px solid var(--color-water-deep); transition: all 0.3s ease; }
+        .event-card:hover { transform: translateX(5px); box-shadow: 0 8px 25px rgba(43, 107, 122, 0.15); }
+        .event-card.past { opacity: 0.7; border-left-color: var(--color-bank); }
+        
+        .event-date { display: inline-block; background: var(--color-water-deep); color: white; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 500; margin-bottom: 1rem; }
+        .event-card.past .event-date { background: var(--color-bank); }
+        
+        .event-title { font-family: var(--font-heading); font-size: 1.4rem; color: var(--color-water-deep); margin-bottom: 0.8rem; }
+        .event-location { font-size: 0.9rem; opacity: 0.7; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .event-description { font-size: 1rem; line-height: 1.7; margin-bottom: 1rem; }
+        .event-status { font-size: 0.85rem; font-weight: 500; }
+        .event-status.upcoming { color: var(--color-water-deep); }
+        .event-status.completed { color: var(--color-bank); }
+
+        .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 1.5rem; margin-top: auto; }
+        .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; align-items: center; }
+            .page-title { font-size: 2rem; }
+            .event-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="site-title">Новосельские истории</a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Главная</a>
+                <a href="photos.html" class="nav-link">Фото</a>
+                <a href="oral-history.html" class="nav-link">Истории</a>
+                <a href="articles.html" class="nav-link">Статьи</a>
+                <a href="events.html" class="nav-link active">Мероприятия</a>
+                <a href="about.html" class="nav-link">О музее</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div class="page-header">
+            <div class="breadcrumbs"><a href="index.html">Главная</a> / Мероприятия</div>
+            <h1 class="page-title">Анонсы и календарь</h1>
+            <p class="page-subtitle">Встречи, выставки и события музея</p>
+        </div>
+
+        <div class="events-list">
+            <!-- Будущее мероприятие -->
+            <div class="event-card">
+                <span class="event-date">15 октября 2026</span>
+                <h2 class="event-title">Открытие выставки «Каналы памяти»</h2>
+                <div class="event-location">📍 Новосельский дом культуры</div>
+                <p class="event-description">Презентация фотоархива мелиоративных работ 1960-х годов. В программе — экскурсия по экспозиции, встреча с авторами проекта и чаепитие.</p>
+                <span class="event-status upcoming">✓ Регистрация открыта</span>
+            </div>
+
+            <!-- Будущее мероприятие -->
+            <div class="event-card">
+                <span class="event-date">28 октября 2026</span>
+                <h2 class="event-title">Вечер устных историй</h2>
+                <div class="event-location">📍 Онлайн (Zoom)</div>
+                <p class="event-description">Публичное прослушивание записей интервью с жителями Новоселья. Обсуждение с историками и краеведами.</p>
+                <span class="event-status upcoming">✓ Скоро откроется регистрация</span>
+            </div>
+
+            <!-- Прошедшее мероприятие -->
+            <div class="event-card past">
+                <span class="event-date">12 сентября 2026</span>
+                <h2 class="event-title">День деревни: сбор фотографий</h2>
+                <div class="event-location">📍 Центральная площадь Новоселья</div>
+                <p class="event-description">Жители принесли более 200 семейных фотографий для оцифровки. Спасибо всем участникам!</p>
+                <span class="event-status completed">✓ Завершено</span>
+            </div>
+
+            <!-- Прошедшее мероприятие -->
+            <div class="event-card past">
+                <span class="event-date">5 августа 2026</span>
+                <h2 class="event-title">Лекция «Мелиорация в СССР»</h2>
+                <div class="event-location">📍 Районная библиотека</div>
+                <p class="event-description">Публичная лекция кандидата исторических наук о роли мелиорации в развитии сельских территорий.</p>
+                <span class="event-status completed">✓ Завершено</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
+        <p>Создано с любовью к родной земле</p>
+    </footer>
+</body>
+</html>
