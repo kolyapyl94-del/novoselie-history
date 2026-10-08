@@ -7,33 +7,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Подключаем Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --color-water-deep: #2B6B7A;
-            --color-water-light: #7FB5C0;
-            --color-bank: #C9A66B;
-            --color-grass-1: #7A996A;
-            --color-bg: #F5F1E8;
-            --color-text: #2C2C2C;
-            --color-accent: #A85A3C;
-            --font-heading: 'Playfair Display', Georgia, serif;
-            --font-body: 'Inter', -apple-system, sans-serif;
+            --color-water-deep: #2B6B7A; --color-water-light: #7FB5C0; --color-bank: #C9A66B;
+            --color-bg: #F5F1E8; --color-text: #2C2C2C; --color-accent: #A85A3C;
+            --font-heading: 'Playfair Display', Georgia, serif; --font-body: 'Inter', -apple-system, sans-serif;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font-body); color: var(--color-text); background-color: var(--color-bg); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Шапка (как на главной) */
         .site-header { position: fixed; top: 0; left: 0; right: 0; background: rgba(245, 241, 232, 0.95); backdrop-filter: blur(8px); z-index: 1000; padding: 1rem 2rem; box-shadow: 0 2px 15px rgba(0,0,0,0.06); border-bottom: 1px solid rgba(201, 166, 107, 0.3); }
         .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
         .site-title { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--color-water-deep); text-decoration: none; }
         .main-nav { display: flex; gap: 1.2rem; flex-wrap: wrap; }
         .nav-link { font-size: 0.9rem; color: var(--color-text); text-decoration: none; transition: color 0.3s ease; position: relative; }
-        .nav-link:hover { color: var(--color-accent); }
+        .nav-link:hover, .nav-link.active { color: var(--color-accent); }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--color-accent); }
 
-        /* Основной контент страницы */
         .page-content { flex: 1; padding-top: 100px; padding-bottom: 3rem; width: 100%; max-width: 1200px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; }
         
-        /* Заголовок и хлебные крошки */
         .page-header { margin-bottom: 2rem; text-align: center; }
         .breadcrumbs { font-size: 0.85rem; color: var(--color-accent); margin-bottom: 0.5rem; }
         .breadcrumbs a { color: var(--color-accent); text-decoration: none; }
@@ -41,7 +35,6 @@
         .page-title { font-family: var(--font-heading); font-size: 2.5rem; color: var(--color-water-deep); margin-bottom: 1rem; }
         .page-subtitle { font-size: 1.1rem; color: var(--color-text); opacity: 0.8; max-width: 600px; margin: 0 auto; }
 
-        /* Фильтры */
         .filter-bar { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 2.5rem; }
         .filter-btn {
             padding: 0.6rem 1.2rem; border: 1px solid var(--color-bank); border-radius: 50px;
@@ -52,7 +45,6 @@
             background: var(--color-water-deep); color: white; border-color: var(--color-water-deep);
         }
 
-        /* Сетка фотографий */
         .photo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -64,26 +56,15 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.4s ease;
             opacity: 1; transform: scale(1);
         }
-        .photo-card.hidden {
-            display: none; /* Для фильтрации */
-        }
-        .photo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(43, 107, 122, 0.2);
-        }
+        .photo-card.hidden { display: none; }
+        .photo-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(43, 107, 122, 0.2); }
 
-        .photo-wrapper {
-            position: relative; overflow: hidden; height: 240px; background: #e0e0e0;
-        }
+        .photo-wrapper { position: relative; overflow: hidden; height: 240px; background: #e0e0e0; }
         .photo-wrapper img {
             width: 100%; height: 100%; object-fit: cover;
-            filter: sepia(0.25) contrast(0.95); /* Эффект архивного фото */
-            transition: transform 0.5s ease, filter 0.5s ease;
+            filter: sepia(0.25) contrast(0.95); transition: transform 0.5s ease, filter 0.5s ease;
         }
-        .photo-card:hover .photo-wrapper img {
-            transform: scale(1.05);
-            filter: sepia(0) contrast(1); /* При наведении фото становится цветным/чётким */
-        }
+        .photo-card:hover .photo-wrapper img { transform: scale(1.05); filter: sepia(0) contrast(1); }
 
         .photo-info { padding: 1.2rem; }
         .photo-year {
@@ -93,8 +74,11 @@
         }
         .photo-title { font-family: var(--font-heading); font-size: 1.1rem; color: var(--color-water-deep); margin-bottom: 0.4rem; }
         .photo-desc { font-size: 0.85rem; color: var(--color-text); opacity: 0.75; line-height: 1.5; }
+        .photo-author { font-size: 0.8rem; color: var(--color-water-light); margin-top: 0.5rem; font-style: italic; }
 
-        /* Футер */
+        .loading-state { text-align: center; padding: 3rem; font-size: 1.1rem; opacity: 0.6; grid-column: 1 / -1; }
+        .empty-state { text-align: center; padding: 3rem; font-size: 1.1rem; opacity: 0.6; grid-column: 1 / -1; }
+
         .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 1.5rem; margin-top: auto; }
         .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.85rem; }
 
@@ -111,11 +95,11 @@
             <a href="index.html" class="site-title">Новосельские истории</a>
             <nav class="main-nav">
                 <a href="index.html" class="nav-link">Главная</a>
-                <a href="#" class="nav-link">Фото</a>
-                <a href="#" class="nav-link">Истории</a>
-                <a href="#" class="nav-link">Статьи</a>
-                <a href="#" class="nav-link">Мероприятия</a>
-                <a href="#" class="nav-link">О музее</a>
+                <a href="photos.html" class="nav-link active">Фото</a>
+                <a href="oral-history.html" class="nav-link">Истории</a>
+                <a href="articles.html" class="nav-link">Статьи</a>
+                <a href="events.html" class="nav-link">Мероприятия</a>
+                <a href="about.html" class="nav-link">О музее</a>
             </nav>
         </div>
     </header>
@@ -127,88 +111,15 @@
             <p class="page-subtitle">Коллекция архивных фотографий, документов и зарисовок, сохраняющих визуальную память о жителях и природе края.</p>
         </div>
 
-        <!-- Фильтры -->
         <div class="filter-bar">
             <button class="filter-btn active" data-filter="all">Все</button>
             <button class="filter-btn" data-filter="people">Люди и семьи</button>
-            <button class="filter-btn" data-filter="landscape">Пейзажи и быт</button>
-            <button class="filter-btn" data-filter="documents">Документы</button>
+            <button class="filter-btn" data-filter="archive">Пейзажи и быт</button>
             <button class="filter-btn" data-filter="melioration">Мелиорация</button>
         </div>
 
-        <!-- Сетка фотографий (заглушки с Unsplash для демонстрации) -->
-        <div class="photo-grid">
-            <!-- Фото 1 -->
-            <div class="photo-card" data-tags="people">
-                <div class="photo-wrapper">
-                    <img src="https://images.unsplash.com/photo-1544211183-497746592219?w=600&h=400&fit=crop" alt="Семейный портрет">
-                </div>
-                <div class="photo-info">
-                    <span class="photo-year">~1950-е</span>
-                    <h3 class="photo-title">Семья Ивановых у дома</h3>
-                    <p class="photo-desc">Традиционный семейный портрет на фоне деревянного дома. Фото передано правнучкой.</p>
-                </div>
-            </div>
-
-            <!-- Фото 2 -->
-            <div class="photo-card" data-tags="landscape">
-                <div class="photo-wrapper">
-                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop" alt="Поле">
-                </div>
-                <div class="photo-info">
-                    <span class="photo-year">1962 г.</span>
-                    <h3 class="photo-title">Поле перед уборкой</h3>
-                    <p class="photo-desc">Вид на южные поля Новоселья в конце лета. На заднем плане виднеется лесополоса.</p>
-                </div>
-            </div>
-
-            <!-- Фото 3 -->
-            <div class="photo-card" data-tags="melioration">
-                <div class="photo-wrapper">
-                    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600&h=400&fit=crop" alt="Канал">
-                </div>
-                <div class="photo-info">
-                    <span class="photo-year">1975 г.</span>
-                    <h3 class="photo-title">Строительство главного канала</h3>
-                    <p class="photo-desc">Рабочие укрепляют берег новой мелиоративной системы. Редкий архивный кадр.</p>
-                </div>
-            </div>
-
-            <!-- Фото 4 -->
-            <div class="photo-card" data-tags="documents">
-                <div class="photo-wrapper">
-                    <img src="https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=600&h=400&fit=crop" alt="Документ">
-                </div>
-                <div class="photo-info">
-                    <span class="photo-year">1938 г.</span>
-                    <h3 class="photo-title">Похозяйственная книга</h3>
-                    <p class="photo-desc">Фрагмент записи о дворовых хозяйствах деревни Новоселье. Рукописный текст.</p>
-                </div>
-            </div>
-
-            <!-- Фото 5 -->
-            <div class="photo-card" data-tags="people">
-                <div class="photo-wrapper">
-                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop" alt="Группа людей">
-                </div>
-                <div class="photo-info">
-                    <span class="photo-year">1980-е</span>
-                    <h3 class="photo-title">Праздник урожая</h3>
-                    <p class="photo-desc">Жители деревни на ежегодном празднике. В центре — председатель колхоза.</p>
-                </div>
-            </div>
-
-            <!-- Фото 6 -->
-            <div class="photo-card" data-tags="melioration landscape">
-                <div class="photo-wrapper">
-                    <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&h=400&fit=crop" alt="Туманное утро">
-                </div>
-                <div class="photo-info">
-                    <span class="photo-year">1990 г.</span>
-                    <h3 class="photo-title">Туман над поймой</h3>
-                    <p class="photo-desc">Утренний пейзаж после завершения мелиоративных работ. Вид с северного холма.</p>
-                </div>
-            </div>
+        <div id="photoGrid" class="photo-grid">
+            <div class="loading-state">Загрузка архива...</div>
         </div>
     </main>
 
@@ -220,32 +131,77 @@
     </footer>
 
     <script>
-        // Простая логика фильтрации на стороне клиента (для демонстрации)
+        // 1. Инициализация Supabase (используем то же имя sb, что и в админке)
+        const SUPABASE_URL = 'https://ecuigoitabccnmsufijk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjdWlnb2l0YWJjY25tc3VmaWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NTAyNDksImV4cCI6MjEwNjQyNjI0OX0.yNsGLXMy11f6WNf8YozBMfOCF4bGSTXEW0fOqvjizTY';
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allPhotos = [];
+
+        // 2. Загрузка фотографий из базы данных
+        async function loadPhotos() {
+            const grid = document.getElementById('photoGrid');
+            
+            const { data, error } = await sb
+                .from('photos')
+                .select('*')
+                .eq('is_published', true)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Ошибка загрузки:', error);
+                grid.innerHTML = '<div class="empty-state">Не удалось загрузить фотографии. Попробуйте обновить страницу.</div>';
+                return;
+            }
+
+            allPhotos = data || [];
+
+            if (allPhotos.length === 0) {
+                grid.innerHTML = '<div class="empty-state">Архив пока пуст. Загляните в админку, чтобы добавить первые фотографии!</div>';
+                return;
+            }
+
+            renderPhotos(allPhotos);
+        }
+
+        // 3. Отрисовка фотографий в сетке
+        function renderPhotos(photos) {
+            const grid = document.getElementById('photoGrid');
+            grid.innerHTML = photos.map(photo => `
+                <div class="photo-card" data-section="${photo.section}">
+                    <div class="photo-wrapper">
+                        <img src="${photo.file_url}" alt="${photo.title}" loading="lazy">
+                    </div>
+                    <div class="photo-info">
+                        ${photo.year ? `<span class="photo-year">${photo.year} г.</span>` : ''}
+                        <h3 class="photo-title">${photo.title}</h3>
+                        <p class="photo-desc">${photo.description || 'Описание отсутствует'}</p>
+                        ${photo.author ? `<p class="photo-author">Источник: ${photo.author}</p>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 4. Логика фильтрации
         document.addEventListener('DOMContentLoaded', () => {
+            loadPhotos();
+
             const filterBtns = document.querySelectorAll('.filter-btn');
-            const photoCards = document.querySelectorAll('.photo-card');
+            const grid = document.getElementById('photoGrid');
 
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // Убираем активный класс у всех кнопок
                     filterBtns.forEach(b => b.classList.remove('active'));
-                    // Добавляем активный класс нажатой кнопке
                     btn.classList.add('active');
 
                     const filterValue = btn.getAttribute('data-filter');
 
-                    photoCards.forEach(card => {
-                        if (filterValue === 'all') {
-                            card.classList.remove('hidden');
-                        } else {
-                            const tags = card.getAttribute('data-tags');
-                            if (tags && tags.includes(filterValue)) {
-                                card.classList.remove('hidden');
-                            } else {
-                                card.classList.add('hidden');
-                            }
-                        }
-                    });
+                    if (filterValue === 'all') {
+                        renderPhotos(allPhotos);
+                    } else {
+                        const filtered = allPhotos.filter(photo => photo.section === filterValue);
+                        renderPhotos(filtered);
+                    }
                 });
             });
         });
