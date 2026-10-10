@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-    <!-- Подключаем Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -54,7 +53,7 @@
         .photo-card {
             background: white; border-radius: 8px; overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.4s ease;
-            opacity: 1; transform: scale(1);
+            cursor: pointer;
         }
         .photo-card.hidden { display: none; }
         .photo-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(43, 107, 122, 0.2); }
@@ -65,6 +64,25 @@
             filter: sepia(0.25) contrast(0.95); transition: transform 0.5s ease, filter 0.5s ease;
         }
         .photo-card:hover .photo-wrapper img { transform: scale(1.05); filter: sepia(0) contrast(1); }
+        
+        /* Иконка лупы при наведении */
+        .photo-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 2rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.9);
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .photo-card:hover .photo-wrapper::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
 
         .photo-info { padding: 1.2rem; }
         .photo-year {
@@ -76,8 +94,108 @@
         .photo-desc { font-size: 0.85rem; color: var(--color-text); opacity: 0.75; line-height: 1.5; }
         .photo-author { font-size: 0.8rem; color: var(--color-water-light); margin-top: 0.5rem; font-style: italic; }
 
-        .loading-state { text-align: center; padding: 3rem; font-size: 1.1rem; opacity: 0.6; grid-column: 1 / -1; }
-        .empty-state { text-align: center; padding: 3rem; font-size: 1.1rem; opacity: 0.6; grid-column: 1 / -1; }
+        .loading-state, .empty-state { text-align: center; padding: 3rem; font-size: 1.1rem; opacity: 0.6; grid-column: 1 / -1; }
+
+        /* ===== LIGHTBOX (МОДАЛЬНОЕ ОКНО) ===== */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        .lightbox-caption {
+            color: white;
+            text-align: center;
+            margin-top: 1rem;
+            max-width: 700px;
+        }
+        .lightbox-caption h3 {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+        .lightbox-caption p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        .lightbox-caption .lb-year {
+            color: var(--color-bank);
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px; right: 30px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: transform 0.2s;
+            z-index: 10001;
+            line-height: 1;
+        }
+        .lightbox-close:hover { transform: scale(1.2); color: var(--color-bank); }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            z-index: 10001;
+        }
+        .lightbox-nav:hover { background: rgba(255,255,255,0.25); transform: translateY(-50%) scale(1.1); }
+        .lightbox-prev { left: 30px; }
+        .lightbox-next { right: 30px; }
+        
+        .lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
 
         .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 1.5rem; margin-top: auto; }
         .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.85rem; }
@@ -86,6 +204,11 @@
             .header-content { flex-direction: column; align-items: center; }
             .page-title { font-size: 2rem; }
             .photo-grid { grid-template-columns: 1fr; }
+            .lightbox-nav { width: 45px; height: 45px; font-size: 2rem; }
+            .lightbox-prev { left: 10px; }
+            .lightbox-next { right: 10px; }
+            .lightbox-close { top: 10px; right: 15px; font-size: 2rem; }
+            .lightbox-caption h3 { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -108,7 +231,7 @@
         <div class="page-header">
             <div class="breadcrumbs"><a href="index.html">Главная</a> / Новоселье в снимках</div>
             <h1 class="page-title">Фотоархив Новоселья</h1>
-            <p class="page-subtitle">Коллекция архивных фотографий, документов и зарисовок, сохраняющих визуальную память о жителях и природе края.</p>
+            <p class="page-subtitle">Кликните на фотографию, чтобы рассмотреть её в полном размере</p>
         </div>
 
         <div class="filter-bar">
@@ -123,6 +246,22 @@
         </div>
     </main>
 
+    <!-- Lightbox (модальное окно для просмотра фото) -->
+    <div id="lightbox" class="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&#8249;</button>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext">&#8250;</button>
+        
+        <div class="lightbox-content">
+            <img id="lightboxImg" class="lightbox-img" src="" alt="">
+            <div class="lightbox-caption">
+                <h3 id="lightboxTitle"></h3>
+                <p id="lightboxDesc"></p>
+            </div>
+        </div>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+
     <footer class="site-footer">
         <div class="footer-content">
             <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
@@ -131,14 +270,15 @@
     </footer>
 
     <script>
-        // 1. Инициализация Supabase (используем то же имя sb, что и в админке)
         const SUPABASE_URL = 'https://ecuigoitabccnmsufijk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjdWlnb2l0YWJjY25tc3VmaWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NTAyNDksImV4cCI6MjEwNjQyNjI0OX0.yNsGLXMy11f6WNf8YozBMfOCF4bGSTXEW0fOqvjizTY';
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let allPhotos = [];
+        let currentPhotoIndex = 0;
+        let currentFilteredPhotos = [];
 
-        // 2. Загрузка фотографий из базы данных
+        // Загрузка фотографий
         async function loadPhotos() {
             const grid = document.getElementById('photoGrid');
             
@@ -150,11 +290,12 @@
 
             if (error) {
                 console.error('Ошибка загрузки:', error);
-                grid.innerHTML = '<div class="empty-state">Не удалось загрузить фотографии. Попробуйте обновить страницу.</div>';
+                grid.innerHTML = '<div class="empty-state">Не удалось загрузить фотографии.</div>';
                 return;
             }
 
             allPhotos = data || [];
+            currentFilteredPhotos = allPhotos;
 
             if (allPhotos.length === 0) {
                 grid.innerHTML = '<div class="empty-state">Архив пока пуст. Загляните в админку, чтобы добавить первые фотографии!</div>';
@@ -164,11 +305,10 @@
             renderPhotos(allPhotos);
         }
 
-        // 3. Отрисовка фотографий в сетке
         function renderPhotos(photos) {
             const grid = document.getElementById('photoGrid');
-            grid.innerHTML = photos.map(photo => `
-                <div class="photo-card" data-section="${photo.section}">
+            grid.innerHTML = photos.map((photo, index) => `
+                <div class="photo-card" data-section="${photo.section}" data-index="${index}">
                     <div class="photo-wrapper">
                         <img src="${photo.file_url}" alt="${photo.title}" loading="lazy">
                     </div>
@@ -180,14 +320,84 @@
                     </div>
                 </div>
             `).join('');
+
+            // Добавляем обработчики клика на карточки
+            document.querySelectorAll('.photo-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const index = parseInt(card.getAttribute('data-index'));
+                    openLightbox(index);
+                });
+            });
         }
 
-        // 4. Логика фильтрации
+        // ===== LIGHTBOX ФУНКЦИИ =====
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxTitle = document.getElementById('lightboxTitle');
+        const lightboxDesc = document.getElementById('lightboxDesc');
+        const lightboxCounter = document.getElementById('lightboxCounter');
+
+        function openLightbox(index) {
+            currentPhotoIndex = index;
+            updateLightboxContent();
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Блокируем прокрутку страницы
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = ''; // Возвращаем прокрутку
+        }
+
+        function updateLightboxContent() {
+            const photo = currentFilteredPhotos[currentPhotoIndex];
+            if (!photo) return;
+            
+            lightboxImg.src = photo.file_url;
+            lightboxImg.alt = photo.title;
+            lightboxTitle.textContent = photo.title;
+            lightboxDesc.innerHTML = `
+                ${photo.year ? `<span class="lb-year">${photo.year} г.</span>` : ''}
+                ${photo.description || ''}
+                ${photo.author ? `<br><em>Источник: ${photo.author}</em>` : ''}
+            `;
+            lightboxCounter.textContent = `${currentPhotoIndex + 1} / ${currentFilteredPhotos.length}`;
+        }
+
+        function nextPhoto() {
+            currentPhotoIndex = (currentPhotoIndex + 1) % currentFilteredPhotos.length;
+            updateLightboxContent();
+        }
+
+        function prevPhoto() {
+            currentPhotoIndex = (currentPhotoIndex - 1 + currentFilteredPhotos.length) % currentFilteredPhotos.length;
+            updateLightboxContent();
+        }
+
+        // Обработчики событий для lightbox
+        document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+        document.getElementById('lightboxNext').addEventListener('click', (e) => { e.stopPropagation(); nextPhoto(); });
+        document.getElementById('lightboxPrev').addEventListener('click', (e) => { e.stopPropagation(); prevPhoto(); });
+        
+        // Закрытие по клику на фон
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        // Управление с клавиатуры
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') nextPhoto();
+            if (e.key === 'ArrowLeft') prevPhoto();
+        });
+
+        // Фильтрация
         document.addEventListener('DOMContentLoaded', () => {
             loadPhotos();
 
             const filterBtns = document.querySelectorAll('.filter-btn');
-            const grid = document.getElementById('photoGrid');
 
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -197,11 +407,12 @@
                     const filterValue = btn.getAttribute('data-filter');
 
                     if (filterValue === 'all') {
-                        renderPhotos(allPhotos);
+                        currentFilteredPhotos = allPhotos;
                     } else {
-                        const filtered = allPhotos.filter(photo => photo.section === filterValue);
-                        renderPhotos(filtered);
+                        currentFilteredPhotos = allPhotos.filter(photo => photo.section === filterValue);
                     }
+                    
+                    renderPhotos(currentFilteredPhotos);
                 });
             });
         });
