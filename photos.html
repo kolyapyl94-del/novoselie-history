@@ -64,25 +64,6 @@
             filter: sepia(0.25) contrast(0.95); transition: transform 0.5s ease, filter 0.5s ease;
         }
         .photo-card:hover .photo-wrapper img { transform: scale(1.05); filter: sepia(0) contrast(1); }
-        
-        /* Иконка лупы при наведении */
-        .photo-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 2rem;
-            opacity: 0;
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.9);
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .photo-card:hover .photo-wrapper::after {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
 
         .photo-info { padding: 1.2rem; }
         .photo-year {
@@ -96,7 +77,6 @@
 
         .loading-state, .empty-state { text-align: center; padding: 3rem; font-size: 1.1rem; opacity: 0.6; grid-column: 1 / -1; }
 
-        /* ===== LIGHTBOX (МОДАЛЬНОЕ ОКНО) ===== */
         .lightbox {
             display: none;
             position: fixed;
@@ -109,10 +89,7 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        .lightbox.active {
-            display: flex;
-            opacity: 1;
-        }
+        .lightbox.active { display: flex; opacity: 1; }
         
         .lightbox-content {
             position: relative;
@@ -129,7 +106,6 @@
             object-fit: contain;
             border-radius: 4px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease;
         }
         
         .lightbox-caption {
@@ -138,21 +114,9 @@
             margin-top: 1rem;
             max-width: 700px;
         }
-        .lightbox-caption h3 {
-            font-family: var(--font-heading);
-            font-size: 1.3rem;
-            margin-bottom: 0.3rem;
-        }
-        .lightbox-caption p {
-            font-size: 0.95rem;
-            opacity: 0.8;
-            line-height: 1.5;
-        }
-        .lightbox-caption .lb-year {
-            color: var(--color-bank);
-            font-weight: 600;
-            margin-right: 0.5rem;
-        }
+        .lightbox-caption h3 { font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 0.3rem; }
+        .lightbox-caption p { font-size: 0.95rem; opacity: 0.8; line-height: 1.5; }
+        .lightbox-caption .lb-year { color: var(--color-bank); font-weight: 600; margin-right: 0.5rem; }
         
         .lightbox-close {
             position: absolute;
@@ -164,7 +128,6 @@
             border: none;
             transition: transform 0.2s;
             z-index: 10001;
-            line-height: 1;
         }
         .lightbox-close:hover { transform: scale(1.2); color: var(--color-bank); }
         
@@ -208,7 +171,6 @@
             .lightbox-prev { left: 10px; }
             .lightbox-next { right: 10px; }
             .lightbox-close { top: 10px; right: 15px; font-size: 2rem; }
-            .lightbox-caption h3 { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -246,7 +208,6 @@
         </div>
     </main>
 
-    <!-- Lightbox (модальное окно для просмотра фото) -->
     <div id="lightbox" class="lightbox">
         <button class="lightbox-close" id="lightboxClose">&times;</button>
         <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&#8249;</button>
@@ -278,7 +239,6 @@
         let currentPhotoIndex = 0;
         let currentFilteredPhotos = [];
 
-        // Загрузка фотографий
         async function loadPhotos() {
             const grid = document.getElementById('photoGrid');
             
@@ -313,7 +273,7 @@
                         <img src="${photo.file_url}" alt="${photo.title}" loading="lazy">
                     </div>
                     <div class="photo-info">
-                        ${photo.year ? `<span class="photo-year">${photo.year} г.</span>` : ''}
+                        ${photo.year ? `<span class="photo-year">${photo.year}</span>` : ''}
                         <h3 class="photo-title">${photo.title}</h3>
                         <p class="photo-desc">${photo.description || 'Описание отсутствует'}</p>
                         ${photo.author ? `<p class="photo-author">Источник: ${photo.author}</p>` : ''}
@@ -321,7 +281,6 @@
                 </div>
             `).join('');
 
-            // Добавляем обработчики клика на карточки
             document.querySelectorAll('.photo-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const index = parseInt(card.getAttribute('data-index'));
@@ -330,7 +289,6 @@
             });
         }
 
-        // ===== LIGHTBOX ФУНКЦИИ =====
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
         const lightboxTitle = document.getElementById('lightboxTitle');
@@ -341,12 +299,12 @@
             currentPhotoIndex = index;
             updateLightboxContent();
             lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Блокируем прокрутку страницы
+            document.body.style.overflow = 'hidden';
         }
 
         function closeLightbox() {
             lightbox.classList.remove('active');
-            document.body.style.overflow = ''; // Возвращаем прокрутку
+            document.body.style.overflow = '';
         }
 
         function updateLightboxContent() {
@@ -357,7 +315,7 @@
             lightboxImg.alt = photo.title;
             lightboxTitle.textContent = photo.title;
             lightboxDesc.innerHTML = `
-                ${photo.year ? `<span class="lb-year">${photo.year} г.</span>` : ''}
+                ${photo.year ? `<span class="lb-year">${photo.year}</span>` : ''}
                 ${photo.description || ''}
                 ${photo.author ? `<br><em>Источник: ${photo.author}</em>` : ''}
             `;
@@ -374,26 +332,21 @@
             updateLightboxContent();
         }
 
-        // Обработчики событий для lightbox
         document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
         document.getElementById('lightboxNext').addEventListener('click', (e) => { e.stopPropagation(); nextPhoto(); });
         document.getElementById('lightboxPrev').addEventListener('click', (e) => { e.stopPropagation(); prevPhoto(); });
         
-        // Закрытие по клику на фон
         lightbox.addEventListener('click', (e) => {
             if (e.target === lightbox) closeLightbox();
         });
 
-        // Управление с клавиатуры
         document.addEventListener('keydown', (e) => {
             if (!lightbox.classList.contains('active')) return;
-            
             if (e.key === 'Escape') closeLightbox();
             if (e.key === 'ArrowRight') nextPhoto();
             if (e.key === 'ArrowLeft') prevPhoto();
         });
 
-        // Фильтрация
         document.addEventListener('DOMContentLoaded', () => {
             loadPhotos();
 
