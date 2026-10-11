@@ -48,12 +48,25 @@
         
         .items-list { display: grid; gap: 1rem; }
         .item-card { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .item-info { flex: 1; }
         .item-info h4 { font-family: var(--font-heading); color: var(--color-water-deep); margin-bottom: 0.3rem; }
         .item-info p { font-size: 0.85rem; opacity: 0.7; }
+        .item-actions { display: flex; gap: 0.5rem; }
+        .edit-btn { background: var(--color-water-deep); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        .edit-btn:hover { background: #1f5563; }
         .delete-btn { background: #e74c3c; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
         .delete-btn:hover { background: #c0392b; }
 
-        .notification { position: fixed; top: 20px; right: 20px; padding: 1rem 1.5rem; border-radius: 8px; color: white; z-index: 10000; animation: slideIn 0.3s ease; }
+        /* Модальное окно редактирования */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 10px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h3 { font-family: var(--font-heading); color: var(--color-water-deep); }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text); }
+        .modal-close:hover { color: var(--color-accent); }
+
+        .notification { position: fixed; top: 20px; right: 20px; padding: 1rem 1.5rem; border-radius: 8px; color: white; z-index: 10001; animation: slideIn 0.3s ease; }
         .notification.success { background: #27ae60; }
         .notification.error { background: #e74c3c; }
         @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
@@ -80,7 +93,7 @@
 
     <div id="dashboard" class="dashboard">
         <header class="admin-header">
-            <h1>🛠️ Админка музея</h1>
+            <h1>️ Админка музея</h1>
             <button class="logout-btn" id="logoutBtn">Выйти</button>
         </header>
 
@@ -101,13 +114,13 @@
                                 <input type="text" id="photoTitle" required>
                             </div>
                             <div class="form-group">
-                                <label>Год (примерно)</label>
-                                <input type="number" id="photoYear" placeholder="1965">
+                                <label>Дата (любой формат)</label>
+                                <input type="text" id="photoYear" placeholder="1980-е, 1960-1970, до 1950">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Описание</label>
-                            <textarea id="photoDesc" rows="3"></textarea>
+                            <textarea id="photoDesc" rows="3" placeholder="Опишите фотографию..."></textarea>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
@@ -153,8 +166,47 @@
         </div>
     </div>
 
+    <!-- Модальное окно редактирования -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Редактировать фотографию</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <form id="editPhotoForm">
+                <input type="hidden" id="editPhotoId">
+                <div class="form-group">
+                    <label>Заголовок *</label>
+                    <input type="text" id="editTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Дата (любой формат)</label>
+                    <input type="text" id="editYear" placeholder="1980-е, 1960-1970, до 1950">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="editDesc" rows="4"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Автор / Источник</label>
+                        <input type="text" id="editAuthor">
+                    </div>
+                    <div class="form-group">
+                        <label>Раздел</label>
+                        <select id="editSection">
+                            <option value="archive">Архив</option>
+                            <option value="melioration">Мелиорация</option>
+                            <option value="people">Люди</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" id="saveEditBtn">Сохранить изменения</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Инициализация Supabase с уникальным именем переменной
         const SUPABASE_URL = 'https://ecuigoitabccnmsufijk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjdWlnb2l0YWJjY25tc3VmaWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NTAyNDksImV4cCI6MjEwNjQyNjI0OX0.yNsGLXMy11f6WNf8YozBMfOCF4bGSTXEW0fOqvjizTY';
         
@@ -164,6 +216,8 @@
         const dashboard = document.getElementById('dashboard');
         const loginForm = document.getElementById('loginForm');
         const logoutBtn = document.getElementById('logoutBtn');
+        const editModal = document.getElementById('editModal');
+        const modalClose = document.getElementById('modalClose');
 
         async function checkSession() {
             const { data: { session } } = await sb.auth.getSession();
@@ -240,13 +294,78 @@
                     <div class="item-card">
                         <div class="item-info">
                             <h4>${photo.title}</h4>
-                            <p>${photo.year ? photo.year + ' г.' : ''} | ${photo.section} | ${photo.author || 'Автор не указан'}</p>
+                            <p>${photo.year ? photo.year + ' г.' : 'Дата не указана'} | ${photo.section} | ${photo.author || 'Автор не указан'}</p>
+                            <p style="margin-top: 0.5rem; font-style: italic;">${photo.description || 'Описание отсутствует'}</p>
                         </div>
-                        <button class="delete-btn" onclick="deletePhoto('${photo.id}')">Удалить</button>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="openEditModal('${photo.id}', '${photo.title.replace(/'/g, "\\'")}', '${photo.year || ''}', '${photo.description ? photo.description.replace(/'/g, "\\'") : ''}', '${photo.author ? photo.author.replace(/'/g, "\\'") : ''}', '${photo.section}')">Редактировать</button>
+                            <button class="delete-btn" onclick="deletePhoto('${photo.id}')">Удалить</button>
+                        </div>
                     </div>
                 `).join('');
             }
         }
+
+        // Открытие модального окна редактирования
+        window.openEditModal = function(id, title, year, description, author, section) {
+            document.getElementById('editPhotoId').value = id;
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editYear').value = year;
+            document.getElementById('editDesc').value = description;
+            document.getElementById('editAuthor').value = author;
+            document.getElementById('editSection').value = section;
+            
+            editModal.classList.add('active');
+        };
+
+        // Закрытие модального окна
+        modalClose.addEventListener('click', () => {
+            editModal.classList.remove('active');
+        });
+
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) {
+                editModal.classList.remove('active');
+            }
+        });
+
+        // Сохранение изменений
+        document.getElementById('editPhotoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveEditBtn');
+            btn.disabled = true;
+            btn.textContent = 'Сохранение...';
+
+            const id = document.getElementById('editPhotoId').value;
+            const title = document.getElementById('editTitle').value;
+            const year = document.getElementById('editYear').value || null;
+            const description = document.getElementById('editDesc').value;
+            const author = document.getElementById('editAuthor').value;
+            const section = document.getElementById('editSection').value;
+
+            const { error } = await sb
+                .from('photos')
+                .update({
+                    title,
+                    year,
+                    description,
+                    author,
+                    section,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', id);
+
+            if (error) {
+                showNotification('Ошибка сохранения: ' + error.message, 'error');
+            } else {
+                showNotification('Изменения сохранены!', 'success');
+                editModal.classList.remove('active');
+                loadPhotos();
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Сохранить изменения';
+        });
 
         window.deletePhoto = async function(id) {
             if (!confirm('Вы уверены, что хотите удалить эту фотографию?')) return;
@@ -292,7 +411,7 @@
                         title,
                         description,
                         file_url: publicUrl,
-                        year: year ? parseInt(year) : null,
+                        year,
                         author,
                         section,
                         is_published: true
