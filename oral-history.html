@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --color-water-deep: #2B6B7A; --color-water-light: #7FB5C0; --color-bank: #C9A66B;
@@ -24,7 +25,7 @@
         .nav-link:hover, .nav-link.active { color: var(--color-accent); }
         .nav-link.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--color-accent); }
 
-        .page-content { flex: 1; padding-top: 100px; padding-bottom: 3rem; width: 100%; max-width: 1200px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; }
+        .page-content { flex: 1; padding-top: 100px; padding-bottom: 3rem; width: 100%; max-width: 1000px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; }
         
         .page-header { margin-bottom: 2rem; text-align: center; }
         .breadcrumbs { font-size: 0.85rem; color: var(--color-accent); margin-bottom: 0.5rem; }
@@ -33,27 +34,27 @@
         .page-title { font-family: var(--font-heading); font-size: 2.5rem; color: var(--color-water-deep); margin-bottom: 1rem; }
         .page-subtitle { font-size: 1.1rem; color: var(--color-text); opacity: 0.8; max-width: 600px; margin: 0 auto; }
 
-        .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .stories-list { margin-top: 2rem; }
 
-        .story-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; }
-        .story-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(43, 107, 122, 0.2); }
+        .story-card { background: white; border-radius: 10px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .story-header { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; align-items: flex-start; }
+        .narrator-photo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; filter: sepia(0.3); flex-shrink: 0; }
+        .narrator-info { flex: 1; }
+        .narrator-info h3 { font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-water-deep); margin-bottom: 0.3rem; }
+        .narrator-info p { font-size: 0.9rem; opacity: 0.7; margin-bottom: 0.5rem; }
+        .story-title { font-family: var(--font-heading); font-size: 1.5rem; color: var(--color-text); font-style: italic; margin-bottom: 1rem; }
         
-        .story-header { padding: 1.5rem; border-bottom: 1px solid rgba(201, 166, 107, 0.3); }
-        .story-narrator { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-        .narrator-photo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; filter: sepia(0.3); }
-        .narrator-info h3 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--color-water-deep); margin-bottom: 0.2rem; }
-        .narrator-info p { font-size: 0.85rem; opacity: 0.7; }
-        .story-title { font-family: var(--font-heading); font-size: 1.1rem; color: var(--color-text); font-style: italic; }
+        .story-content { font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.5rem; }
+        .story-content p { margin-bottom: 1rem; }
+        .story-content blockquote { border-left: 3px solid var(--color-bank); padding-left: 1rem; margin: 1rem 0; font-style: italic; opacity: 0.9; }
+        .story-content ul, .story-content ol { margin-left: 2rem; margin-bottom: 1rem; }
+        
+        .story-date { font-size: 0.85rem; opacity: 0.6; margin-bottom: 1rem; }
 
-        .story-content { padding: 1.5rem; }
-        .story-excerpt { font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem; }
-        .story-date { font-size: 0.8rem; opacity: 0.6; margin-bottom: 1rem; }
-
-        .audio-player { background: var(--color-bg); padding: 0.8rem; border-radius: 6px; display: flex; align-items: center; gap: 0.8rem; }
-        .play-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--color-water-deep); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.3s; }
-        .play-btn:hover { background: var(--color-accent); }
-        .audio-info { flex: 1; }
-        .audio-duration { font-size: 0.8rem; opacity: 0.7; }
+        .audio-player { background: var(--color-bg); padding: 1rem; border-radius: 8px; display: flex; align-items: center; gap: 1rem; }
+        .audio-player audio { flex: 1; }
+        
+        .loading-state, .empty-state { text-align: center; padding: 3rem; font-size: 1.1rem; opacity: 0.6; }
 
         .site-footer { background: var(--color-water-deep); color: white; text-align: center; padding: 1.5rem; margin-top: auto; }
         .site-footer p { margin: 0.3rem 0; opacity: 0.85; font-size: 0.85rem; }
@@ -61,7 +62,7 @@
         @media (max-width: 768px) {
             .header-content { flex-direction: column; align-items: center; }
             .page-title { font-size: 2rem; }
-            .stories-grid { grid-template-columns: 1fr; }
+            .story-header { flex-direction: column; align-items: center; text-align: center; }
         }
     </style>
 </head>
@@ -87,87 +88,72 @@
             <p class="page-subtitle">Записи интервью с жителями — живые воспоминания о быте, работе и жизни в деревне</p>
         </div>
 
-        <div class="stories-grid">
-            <!-- История 1 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-narrator">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&h=120&fit=crop" alt="Анна Петровна" class="narrator-photo">
-                        <div class="narrator-info">
-                            <h3>Анна Петровна Смирнова</h3>
-                            <p>1938 г.р., прожила в Новоселье всю жизнь</p>
-                        </div>
-                    </div>
-                    <h4 class="story-title">«Как мы каналы копали»</h4>
-                </div>
-                <div class="story-content">
-                    <p class="story-excerpt">Весной 1962-го пришли инженеры, сказали — будем мелиорацию делать. Вся деревня вышла помогать. Я тогда ещё девчонкой была, но помню, как отец говорил: "Вода теперь сама придёт, не надо будет вёдра таскать"...</p>
-                    <p class="story-date">Интервью записано: 15 марта 2024 г.</p>
-                    <div class="audio-player">
-                        <button class="play-btn">▶</button>
-                        <div class="audio-info">
-                            <div>Аудиозапись интервью</div>
-                            <div class="audio-duration">42:15</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- История 2 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-narrator">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop" alt="Иван Иванович" class="narrator-photo">
-                        <div class="narrator-info">
-                            <h3>Иван Иванович Козлов</h3>
-                            <p>1945 г.р., механизатор</p>
-                        </div>
-                    </div>
-                    <h4 class="story-title">«Первый трактор в деревне»</h4>
-                </div>
-                <div class="story-content">
-                    <p class="story-excerpt">Помню, как в 1968-м привезли первый ДТ-75. Мы, пацаны, бегали за ним весь день. Дядя Миша, который его привёз, разрешил мне посидеть в кабине. Я тогда решил, что буду механизатором...</p>
-                    <p class="story-date">Интервью записано: 22 апреля 2024 г.</p>
-                    <div class="audio-player">
-                        <button class="play-btn">▶</button>
-                        <div class="audio-info">
-                            <div>Аудиозапись интервью</div>
-                            <div class="audio-duration">38:42</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- История 3 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-narrator">
-                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&h=120&fit=crop" alt="Мария Ивановна" class="narrator-photo">
-                        <div class="narrator-info">
-                            <h3>Мария Ивановна Белова</h3>
-                            <p>1952 г.р., учительница</p>
-                        </div>
-                    </div>
-                    <h4 class="story-title">«Школа на три класса»</h4>
-                </div>
-                <div class="story-content">
-                    <p class="story-excerpt">В нашей школе было всего три класса, и все в одной комнате. Учительница вела сразу три урока: с первыми — письмо, со вторыми — чтение, с третьими — математику. Мы привыкли не мешать друг другу...</p>
-                    <p class="story-date">Интервью записано: 10 мая 2024 г.</p>
-                    <div class="audio-player">
-                        <button class="play-btn">▶</button>
-                        <div class="audio-info">
-                            <div>Аудиозапись интервью</div>
-                            <div class="audio-duration">51:20</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div id="storiesList" class="stories-list">
+            <div class="loading-state">Загрузка историй...</div>
         </div>
     </main>
 
     <footer class="site-footer">
-        <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
-        <p>Создано с любовью к родной земле</p>
+        <div class="footer-content">
+            <p>&copy; 2026 Новосельские истории. Цифровой музей.</p>
+            <p>Создано с любовью к родной земле</p>
+        </div>
     </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://ecuigoitabccnmsufijk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjdWlnb2l0YWJjY25tc3VmaWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NTAyNDksImV4cCI6MjEwNjQyNjI0OX0.yNsGLXMy11f6WNf8YozBMfOCF4bGSTXEW0fOqvjizTY';
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadStories() {
+            const listContainer = document.getElementById('storiesList');
+            
+            const { data, error } = await sb
+                .from('oral_histories')
+                .select('*')
+                .eq('is_published', true)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Ошибка загрузки:', error);
+                listContainer.innerHTML = '<div class="empty-state">Не удалось загрузить истории.</div>';
+                return;
+            }
+
+            if (data.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state">Пока нет опубликованных историй. Загляните в админку!</div>';
+                return;
+            }
+
+            listContainer.innerHTML = data.map(oral => `
+                <div class="story-card">
+                    <div class="story-header">
+                        ${oral.narrator_photo_url ? `<img src="${oral.narrator_photo_url}" alt="${oral.narrator_name}" class="narrator-photo">` : ''}
+                        <div class="narrator-info">
+                            <h3>${oral.narrator_name}</h3>
+                            ${oral.narrator_bio ? `<p>${oral.narrator_bio}</p>` : ''}
+                        </div>
+                    </div>
+                    <h2 class="story-title">«${oral.title}»</h2>
+                    <div class="story-content">${oral.content}</div>
+                    ${oral.interview_date ? `<p class="story-date">Интервью записано: ${formatDate(oral.interview_date)}</p>` : ''}
+                    ${oral.audio_url ? `
+                        <div class="audio-player">
+                            <span>🎧 Аудиозапись:</span>
+                            <audio controls src="${oral.audio_url}"></audio>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('ru-RU', options);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadStories);
+    </script>
 </body>
 </html>
